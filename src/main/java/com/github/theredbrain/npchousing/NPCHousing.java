@@ -1,5 +1,7 @@
 package com.github.theredbrain.npchousing;
 
+import com.github.theredbrain.npchousing.registry.BlockRegistry;
+import com.github.theredbrain.npchousing.registry.EntityRegistry;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.util.Identifier;
@@ -17,6 +19,9 @@ public class NPCHousing implements ModInitializer {
 		// Proceed with mild caution.
 
 		LOGGER.info("Housing your NPCs since 2024!");
+
+		BlockRegistry.init();
+		EntityRegistry.init();
 	}
 
 	public static Identifier identifier(String path) {

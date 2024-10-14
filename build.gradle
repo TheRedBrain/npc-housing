@@ -13,11 +13,43 @@ base {
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+
+	// Cloth Config
+	maven {
+		url "https://maven.shedaniel.me/"
+	}
+
+	// Cloth Config, Mod Menu
+	maven {
+		name = "TerraformersMC"
+		url = "https://maven.terraformersmc.com/"
+	}
+
+	// Cardinal Components
+	maven {
+		name = "Ladysnake Libs"
+		url = 'https://maven.ladysnake.org/releases'
+	}
+
+	// Immersive Portals
+	maven {
+		url 'https://jitpack.io'
+	}
+
+	// Script Blocks, Slot Customization API
+	maven {
+		name = "Modrinth"
+		url = "https://api.modrinth.com/maven"
+		content {
+			includeGroup "maven.modrinth"
+		}
+	}
+
+	// TODO temp
+	// Azure Lib
+	maven {
+		url 'https://libs.azuredoom.com:4443/mods'
+	}
 }
 
 loom {
@@ -40,7 +72,32 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	
+
+	// Cloth Config
+	modImplementation ("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config}")
+
+	// Immersive Portals Core
+	modImplementation "com.github.iPortalTeam.ImmersivePortalsMod:imm_ptl_core:${project.q_misc_util_version}"
+
+	// Miscellaneous Utility Library
+	modImplementation "com.github.iPortalTeam.ImmersivePortalsMod:q_misc_util:${project.q_misc_util_version}"
+
+	// Cardinal Components
+	modImplementation ("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cca_version}")
+	modImplementation ("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cca_version}")
+
+	// Mod Menu
+	modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
+
+	// Slot Customization API
+	modImplementation "maven.modrinth:slot-customization-api:${project.slot_customization_api_version}"
+
+	// Script Blocks
+	modImplementation "maven.modrinth:script-blocks:${project.script_blocks_version}"
+
+	// Azure Lib TODO temp
+	modImplementation("mod.azure.azurelib:azurelib-fabric-${project.minecraft_version}:${project.azure_lib_version}")
+
 }
 
 processResources {

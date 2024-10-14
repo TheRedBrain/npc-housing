@@ -3,6 +3,7 @@
 	"package": "com.github.theredbrain.npchousing.mixin.client",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
+		"network.ClientPlayerEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
