@@ -1,71 +1,37 @@
 package com.github.theredbrain.npchousing.block.entity;
 
 import com.github.theredbrain.npchousing.registry.EntityRegistry;
-import com.github.theredbrain.scriptblocks.block.RotatedBlockWithEntity;
-import com.github.theredbrain.scriptblocks.block.entity.RotatedBlockEntity;
-import com.github.theredbrain.scriptblocks.util.BlockRotationUtils;
+import com.github.theredbrain.npchousing.registry.Tags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.tuple.MutablePair;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
-public class NPCHousingBlockEntity extends RotatedBlockEntity {
-//	private String ownerUuid = "";
-//	private boolean isOwnerSet;
-//	private List<String> coOwnerList = new ArrayList<>(List.of());
-//	private List<String> trustedList = new ArrayList<>(List.of());
-//	private List<String> guestList = new ArrayList<>(List.of());
+public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ {
+
 	private boolean showInfluenceArea = true;
 	private Vec3i influenceAreaDimensions = new Vec3i(5, 3, 5);//Vec3i.ZERO;
 	private BlockPos influenceAreaPositionOffset = new BlockPos(0, 1, 0);
-//	private OwnerMode ownerMode = OwnerMode.DIMENSION_OWNER;
-//	private MutablePair<BlockPos, Boolean> triggeredBlock = new MutablePair<>(new BlockPos(0, 0, 0), false);
 
 	public NPCHousingBlockEntity(BlockPos pos, BlockState state) {
 		super(EntityRegistry.NPC_HOUSING_BLOCK_ENTITY, pos, state);
 	}
 
 	@Override
-	protected void writeNbt(NbtCompound nbt) {
-//		nbt.putString("ownerUuid", this.ownerUuid);
-//		nbt.putBoolean("isOwnerSet", isOwnerSet);
-//
-//		int coOwnerListSize = coOwnerList.size();
-//		nbt.putInt("coOwnerListSize", coOwnerListSize);
-//		for (int i = 0; i < coOwnerListSize; i++) {
-//			nbt.putString("coOwnerListEntry" + i, this.coOwnerList.get(i));
-//		}
-//
-//		int trustedListSize = trustedList.size();
-//		nbt.putInt("trustedListSize", trustedListSize);
-//		for (int i = 0; i < trustedListSize; i++) {
-//			nbt.putString("trustedListEntry" + i, this.trustedList.get(i));
-//		}
-//
-//		int guestListSize = guestList.size();
-//		nbt.putInt("guestListSize", guestListSize);
-//		for (int i = 0; i < guestListSize; i++) {
-//			nbt.putString("guestListEntry" + i, this.guestList.get(i));
-//		}
+	protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
 
 		nbt.putBoolean("showInfluenceArea", this.showInfluenceArea);
 
@@ -77,39 +43,11 @@ public class NPCHousingBlockEntity extends RotatedBlockEntity {
 		nbt.putInt("influenceAreaPositionOffsetY", this.influenceAreaPositionOffset.getY());
 		nbt.putInt("influenceAreaPositionOffsetZ", this.influenceAreaPositionOffset.getZ());
 
-//		nbt.putString("ownerMode", this.ownerMode.asString());
-//
-//		nbt.putInt("triggeredBlockPositionOffsetX", this.triggeredBlock.getLeft().getX());
-//		nbt.putInt("triggeredBlockPositionOffsetY", this.triggeredBlock.getLeft().getY());
-//		nbt.putInt("triggeredBlockPositionOffsetZ", this.triggeredBlock.getLeft().getZ());
-//		nbt.putBoolean("triggeredBlockResets", this.triggeredBlock.getRight());
-
-		super.writeNbt(nbt);
+		super.writeNbt(nbt, registryLookup);
 	}
 
 	@Override
-	public void readNbt(NbtCompound nbt) {
-//		this.ownerUuid = nbt.getString("ownerUuid");
-//		this.isOwnerSet = nbt.getBoolean("isOwnerSet");
-//
-//		this.coOwnerList = new ArrayList<>(List.of());
-//		this.trustedList = new ArrayList<>(List.of());
-//		this.guestList = new ArrayList<>(List.of());
-//
-//		int coOwnerListSize = nbt.getInt("coOwnerListSize");
-//		for (int i = 0; i < coOwnerListSize; i++) {
-//			this.coOwnerList.add(nbt.getString("coOwnerListEntry" + i));
-//		}
-//
-//		int trustedListSize = nbt.getInt("trustedListSize");
-//		for (int i = 0; i < trustedListSize; i++) {
-//			this.trustedList.add(nbt.getString("trustedListEntry" + i));
-//		}
-//
-//		int guestListSize = nbt.getInt("guestListSize");
-//		for (int i = 0; i < guestListSize; i++) {
-//			this.guestList.add(nbt.getString("guestListEntry" + i));
-//		}
+	public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
 
 		this.showInfluenceArea = nbt.getBoolean("showInfluenceArea");
 
@@ -123,14 +61,7 @@ public class NPCHousingBlockEntity extends RotatedBlockEntity {
 		int n = MathHelper.clamp(nbt.getInt("influenceAreaPositionOffsetZ"), -48, 48);
 		this.influenceAreaPositionOffset = new BlockPos(l, m, n);
 
-//		this.ownerMode = OwnerMode.byName(nbt.getString("ownerMode")).orElseGet(() -> OwnerMode.DIMENSION_OWNER);
-//
-//		int x = MathHelper.clamp(nbt.getInt("triggeredBlockPositionOffsetX"), -48, 48);
-//		int y = MathHelper.clamp(nbt.getInt("triggeredBlockPositionOffsetY"), -48, 48);
-//		int z = MathHelper.clamp(nbt.getInt("triggeredBlockPositionOffsetZ"), -48, 48);
-//		this.triggeredBlock = new MutablePair<>(new BlockPos(x, y, z), nbt.getBoolean("triggeredBlockResets"));
-
-		super.readNbt(nbt);
+		super.readNbt(nbt, registryLookup);
 	}
 
 	public BlockEntityUpdateS2CPacket toUpdatePacket() {
@@ -138,8 +69,8 @@ public class NPCHousingBlockEntity extends RotatedBlockEntity {
 	}
 
 	@Override
-	public NbtCompound toInitialChunkDataNbt() {
-		return this.createNbt();
+	public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+		return this.createComponentlessNbt(registryLookup);
 	}
 
 	public static void tick(World world, BlockPos pos, BlockState state, NPCHousingBlockEntity blockEntity) {
@@ -185,49 +116,6 @@ public class NPCHousingBlockEntity extends RotatedBlockEntity {
 		}
 	}
 
-//	public String getOwnerUuid() {
-//		return this.ownerUuid;
-//	}
-//
-//	public boolean setOwnerUuid(String ownerUuid) {
-//		if (ownerUuid.equals("")) {
-//			this.ownerUuid = ownerUuid;
-//			return true;
-//		}
-//		if (UUIDUtilities.isStringValidUUID(ownerUuid)) {
-//			this.ownerUuid = ownerUuid;
-//			return true;
-//		}
-//		return false;
-//	}
-//
-//	public List<String> getCoOwnerList() {
-//		return this.coOwnerList;
-//	}
-//
-//	public boolean setCoOwnerList(List<String> coOwnerList) {
-//		this.coOwnerList = coOwnerList;
-//		return true;
-//	}
-//
-//	public List<String> getTrustedList() {
-//		return this.trustedList;
-//	}
-//
-//	public boolean setTrustedList(List<String> trustedList) {
-//		this.trustedList = trustedList;
-//		return true;
-//	}
-//
-//	public List<String> getGuestList() {
-//		return this.guestList;
-//	}
-//
-//	public boolean setGuestList(List<String> guestList) {
-//		this.guestList = guestList;
-//		return true;
-//	}
-
 	public boolean getShowInfluenceArea() {
 		return this.showInfluenceArea;
 	}
@@ -257,43 +145,6 @@ public class NPCHousingBlockEntity extends RotatedBlockEntity {
 		return true;
 	}
 
-//	public MutablePair<BlockPos, Boolean> getTriggeredBlock() {
-//		return this.triggeredBlock;
-//	}
-//
-//	public void setTriggeredBlock(MutablePair<BlockPos, Boolean> triggeredBlock) {
-//		this.triggeredBlock = triggeredBlock;
-//	}
-//
-//	public OwnerMode getOwnerMode() {
-//		return this.ownerMode;
-//	}
-//
-//	public boolean setOwnerMode(OwnerMode ownerMode) {
-//		this.ownerMode = ownerMode;
-//		return true;
-//	}
-//
-//	public boolean isOwnerSet() {
-//		return this.isOwnerSet;
-//	}
-//
-//	public void setIsOwnerSet(boolean isOwnerSet) {
-//		this.isOwnerSet = isOwnerSet;
-//	}
-//
-//	private static String initOwner(World world) {
-//		if (world != null) {
-//			String worldRegistryKey = world.getRegistryKey().getValue().getPath();
-//			String[] parts = worldRegistryKey.split("_");
-//			String uuidString = parts[0];
-//			if (UUIDUtilities.isStringValidUUID(uuidString)) {
-//				return uuidString;
-//			}
-//		}
-//		return "";
-//	}
-
 	public boolean influenceAreaContains(BlockPos pos) {
 		return (double) (pos.getX() + 1) > (this.pos.getX() + this.influenceAreaPositionOffset.getX())
 				&& (double) pos.getX() < (this.pos.getX() + this.influenceAreaPositionOffset.getX() + this.influenceAreaDimensions.getX())
@@ -303,69 +154,118 @@ public class NPCHousingBlockEntity extends RotatedBlockEntity {
 				&& (double) pos.getZ() < (this.pos.getZ() + this.influenceAreaPositionOffset.getZ() + this.influenceAreaDimensions.getZ());
 	}
 
-//	public void trigger() {
-//		if (this.world != null) {
-//			BlockEntity blockEntity = world.getBlockEntity(new BlockPos(this.pos.getX() + this.triggeredBlock.getLeft().getX(), this.pos.getY() + this.triggeredBlock.getLeft().getY(), this.pos.getZ() + this.triggeredBlock.getLeft().getZ()));
-//			if (blockEntity != this) {
-//				boolean triggeredBlockResets = this.triggeredBlock.getRight();
-//				if (triggeredBlockResets && blockEntity instanceof Resetable resetable) {
-//					resetable.reset();
-//				} else if (!triggeredBlockResets && blockEntity instanceof Triggerable triggerable) {
-//					triggerable.trigger();
-//				}
+//	@Override
+//	protected void onRotate(BlockState state) {
+//		if (state.getBlock() instanceof RotatedBlockWithEntity) {
+//			if (state.get(RotatedBlockWithEntity.ROTATED) != this.rotated) {
+//				BlockRotation blockRotation = BlockRotationUtils.calculateRotationFromDifferentRotatedStates(state.get(RotatedBlockWithEntity.ROTATED), this.rotated);
+////				this.triggeredBlock.setLeft(BlockRotationUtils.rotateOffsetBlockPos(this.triggeredBlock.getLeft(), blockRotation));
+//				MutablePair<BlockPos, Vec3i> offsetArea = BlockRotationUtils.rotateOffsetArea(this.influenceAreaPositionOffset, this.influenceAreaDimensions, blockRotation);
+//				this.influenceAreaPositionOffset = offsetArea.getLeft();
+//				this.influenceAreaDimensions = offsetArea.getRight();
+//				this.rotated = state.get(RotatedBlockWithEntity.ROTATED);
+//			}
+//			if (state.get(RotatedBlockWithEntity.X_MIRRORED) != this.x_mirrored) {
+////				this.triggeredBlock.setLeft(BlockRotationUtils.mirrorOffsetBlockPos(this.triggeredBlock.getLeft(), BlockMirror.FRONT_BACK));
+//				MutablePair<BlockPos, Vec3i> offsetArea = BlockRotationUtils.mirrorOffsetArea(this.influenceAreaPositionOffset, this.influenceAreaDimensions, BlockMirror.FRONT_BACK);
+//				this.influenceAreaPositionOffset = offsetArea.getLeft();
+//				this.influenceAreaDimensions = offsetArea.getRight();
+//				this.x_mirrored = state.get(RotatedBlockWithEntity.X_MIRRORED);
+//			}
+//			if (state.get(RotatedBlockWithEntity.Z_MIRRORED) != this.z_mirrored) {
+////				this.triggeredBlock.setLeft(BlockRotationUtils.mirrorOffsetBlockPos(this.triggeredBlock.getLeft(), BlockMirror.LEFT_RIGHT));
+//				MutablePair<BlockPos, Vec3i> offsetArea = BlockRotationUtils.mirrorOffsetArea(this.influenceAreaPositionOffset, this.influenceAreaDimensions, BlockMirror.LEFT_RIGHT);
+//				this.influenceAreaPositionOffset = offsetArea.getLeft();
+//				this.influenceAreaDimensions = offsetArea.getRight();
+//				this.z_mirrored = state.get(RotatedBlockWithEntity.Z_MIRRORED);
 //			}
 //		}
 //	}
 
-	@Override
-	protected void onRotate(BlockState state) {
-		if (state.getBlock() instanceof RotatedBlockWithEntity) {
-			if (state.get(RotatedBlockWithEntity.ROTATED) != this.rotated) {
-				BlockRotation blockRotation = BlockRotationUtils.calculateRotationFromDifferentRotatedStates(state.get(RotatedBlockWithEntity.ROTATED), this.rotated);
-//				this.triggeredBlock.setLeft(BlockRotationUtils.rotateOffsetBlockPos(this.triggeredBlock.getLeft(), blockRotation));
-				MutablePair<BlockPos, Vec3i> offsetArea = BlockRotationUtils.rotateOffsetArea(this.influenceAreaPositionOffset, this.influenceAreaDimensions, blockRotation);
-				this.influenceAreaPositionOffset = offsetArea.getLeft();
-				this.influenceAreaDimensions = offsetArea.getRight();
-				this.rotated = state.get(RotatedBlockWithEntity.ROTATED);
+	public static HouseStatus checkHouseStatus(NPCHousingBlockEntity npcHousingBlockEntity) {
+		if (npcHousingBlockEntity.getWorld() instanceof ServerWorld serverWorld) {
+			Vec3i vec3i = npcHousingBlockEntity.getInfluenceAreaDimensions();
+			int nx = vec3i.getX();
+			int ny = vec3i.getY();
+			int nz = vec3i.getZ();
+
+			// TODO check value boundaries
+
+			boolean hasLight = false;
+			boolean hasChair = false;
+			boolean hasTable = false;
+			boolean hasSpace = false;
+
+			BlockPos blockPos;
+			BlockState blockState;
+			for (int x = 0; x < nx; x++) {
+				for (int y = 0; y < ny; y++) {
+					for (int z = 0; z < nz; z++) {
+						blockPos = npcHousingBlockEntity.pos.add(x, y, z);
+						blockState = serverWorld.getBlockState(blockPos);
+						if ((x == 0 || x == (nx - 1)) && y > 0 && y < (ny - 1) &&  z > 0 && z < (nz - 1)) {
+							if (!blockState.isIn(Tags.WALL_BLOCKS)) {
+								return HouseStatus.INVALID;
+							}
+						}
+						if (x > 0 && x < (nx - 1) && y > 0 && y < (ny - 1) && (z == 0 || z == (nz - 1))) {
+							if (!blockState.isIn(Tags.WALL_BLOCKS)) {
+								return HouseStatus.INVALID;
+							}
+						}
+						if (x > 0 && x < (nx - 1) && (y == 0 || y == (ny - 1)) && z > 0 && z < (nz - 1)) {
+							if (!blockState.isIn(Tags.FLOOR_BLOCKS)) {
+								return HouseStatus.INVALID;
+							}
+						}
+						if (x > 0 && x < (nx - 1) && y > 0 && y < (ny - 1) && z > 0 && z < (nz - 1)) {
+							hasLight = blockState.isIn(Tags.LIGHT_BLOCKS);
+							hasChair = blockState.isIn(Tags.CHAIR_BLOCKS);
+							hasTable = blockState.isIn(Tags.TABLE_BLOCKS);
+						}
+						if (blockState.isAir() && !hasSpace) {
+							hasSpace = serverWorld.getBlockState(npcHousingBlockEntity.pos.add(0, 1, 0)).isAir();
+						}
+					}
+
+				}
+
 			}
-			if (state.get(RotatedBlockWithEntity.X_MIRRORED) != this.x_mirrored) {
-//				this.triggeredBlock.setLeft(BlockRotationUtils.mirrorOffsetBlockPos(this.triggeredBlock.getLeft(), BlockMirror.FRONT_BACK));
-				MutablePair<BlockPos, Vec3i> offsetArea = BlockRotationUtils.mirrorOffsetArea(this.influenceAreaPositionOffset, this.influenceAreaDimensions, BlockMirror.FRONT_BACK);
-				this.influenceAreaPositionOffset = offsetArea.getLeft();
-				this.influenceAreaDimensions = offsetArea.getRight();
-				this.x_mirrored = state.get(RotatedBlockWithEntity.X_MIRRORED);
-			}
-			if (state.get(RotatedBlockWithEntity.Z_MIRRORED) != this.z_mirrored) {
-//				this.triggeredBlock.setLeft(BlockRotationUtils.mirrorOffsetBlockPos(this.triggeredBlock.getLeft(), BlockMirror.LEFT_RIGHT));
-				MutablePair<BlockPos, Vec3i> offsetArea = BlockRotationUtils.mirrorOffsetArea(this.influenceAreaPositionOffset, this.influenceAreaDimensions, BlockMirror.LEFT_RIGHT);
-				this.influenceAreaPositionOffset = offsetArea.getLeft();
-				this.influenceAreaDimensions = offsetArea.getRight();
-				this.z_mirrored = state.get(RotatedBlockWithEntity.Z_MIRRORED);
+			if (!(hasLight && hasChair && hasTable && hasSpace)) {
+				return HouseStatus.INVALID;
 			}
 		}
+		return HouseStatus.IS_CLIENT;
 	}
 
-//	public static enum OwnerMode implements StringIdentifiable {
-//		DIMENSION_OWNER("dimension_owner"),
-//		INTERACTION("interaction");
-//
-//		private final String name;
-//
-//		private OwnerMode(String name) {
-//			this.name = name;
-//		}
-//
-//		@Override
-//		public String asString() {
-//			return this.name;
-//		}
-//
-//		public static Optional<OwnerMode> byName(String name) {
-//			return Arrays.stream(OwnerMode.values()).filter(ownerMode -> ownerMode.asString().equals(name)).findFirst();
-//		}
-//
-//		public Text asText() {
-//			return Text.translatable("gui.housing_block.ownerMode." + this.name);
-//		}
-//	}
+	public static enum HouseStatus implements StringIdentifiable {
+		VALID("valid", true),
+		INVALID("invalid", false),
+		IS_CLIENT("is_client", false);
+
+		private final String name;
+		private final boolean isValid;
+
+		private HouseStatus(String name, boolean isValid) {
+			this.name = name;
+			this.isValid = isValid;
+		}
+
+		@Override
+		public String asString() {
+			return this.name;
+		}
+
+		public boolean isValid() {
+			return isValid;
+		}
+
+		public static Optional<HouseStatus> byName(String name) {
+			return Arrays.stream(HouseStatus.values()).filter(houseStatus -> houseStatus.asString().equals(name)).findFirst();
+		}
+
+		public Text asText() {
+			return Text.translatable("gui.teleporter_block.spawn_point_type." + this.name);
+		}
+	}
 }

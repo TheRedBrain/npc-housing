@@ -25,13 +25,7 @@ repositories {
 		url = "https://maven.terraformersmc.com/"
 	}
 
-	// Cardinal Components
-	maven {
-		name = "Ladysnake Libs"
-		url = 'https://maven.ladysnake.org/releases'
-	}
-
-	// Immersive Portals
+	// DimLib
 	maven {
 		url 'https://jitpack.io'
 	}
@@ -45,11 +39,6 @@ repositories {
 		}
 	}
 
-	// TODO temp
-	// Azure Lib
-	maven {
-		url 'https://libs.azuredoom.com:4443/mods'
-	}
 }
 
 loom {
@@ -74,17 +63,12 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// Cloth Config
-	modImplementation ("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config}")
+	modImplementation ("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")
 
-	// Immersive Portals Core
-	modImplementation "com.github.iPortalTeam.ImmersivePortalsMod:imm_ptl_core:${project.q_misc_util_version}"
-
-	// Miscellaneous Utility Library
-	modImplementation "com.github.iPortalTeam.ImmersivePortalsMod:q_misc_util:${project.q_misc_util_version}"
-
-	// Cardinal Components
-	modImplementation ("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cca_version}")
-	modImplementation ("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cca_version}")
+	// DimLib
+	modApi("com.github.iPortalTeam:DimLib:${dimlib_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 
 	// Mod Menu
 	modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
@@ -93,18 +77,16 @@ dependencies {
 	modImplementation "maven.modrinth:slot-customization-api:${project.slot_customization_api_version}"
 
 	// Script Blocks
-	modImplementation "maven.modrinth:script-blocks:${project.script_blocks_version}"
-
-	// Azure Lib TODO temp
-	modImplementation("mod.azure.azurelib:azurelib-fabric-${project.minecraft_version}:${project.azure_lib_version}")
+//	modImplementation "maven.modrinth:script-blocks:${project.script_blocks_version}"
 
 }
 
 processResources {
 	inputs.property "version", project.version
+	filteringCharset "UTF-8"
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand(project.properties)
 	}
 }
 
@@ -153,6 +135,7 @@ if (project.hasProperty('release_type')) {
 			relations {
 				requiredDependency 'cloth-config'
 				requiredDependency 'fabric-api'
+				requiredDependency 'slot-customization-api'
 			}
 
 			mainArtifact(remapJar)
@@ -183,6 +166,8 @@ if (project.hasProperty('release_type')) {
 			// The type can either be `project` or `version`
 			required.project 'cloth-config'
 			required.project 'fabric-api'
+			embedded.project 'dimlib'
+			required.project 'slot-customization-api'
 		}
 	}
 
