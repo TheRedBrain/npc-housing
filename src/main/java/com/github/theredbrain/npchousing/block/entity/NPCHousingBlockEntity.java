@@ -2,27 +2,23 @@ package com.github.theredbrain.npchousing.block.entity;
 
 import com.github.theredbrain.npchousing.registry.EntityRegistry;
 import com.github.theredbrain.npchousing.registry.Tags;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.StructureBoxRendering;
-import net.minecraft.block.enums.StructureBlockMode;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.World;
-
 import java.util.Arrays;
 import java.util.Optional;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BoundingBoxRenderable;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
-public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ implements StructureBoxRendering {
+public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ implements BoundingBoxRenderable {
 
 	private boolean showInfluenceArea = true;
 	private Vec3i influenceAreaDimensions = new Vec3i(5, 3, 5);//Vec3i.ZERO;
@@ -66,17 +62,17 @@ public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ imp
 //		super.readNbt(nbt, registryLookup);
 //	}
 
-	public BlockEntityUpdateS2CPacket toUpdatePacket() {
-		return BlockEntityUpdateS2CPacket.create(this);
+	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override
-	public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
-		return this.createComponentlessNbt(registryLookup);
+	public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
+		return this.saveCustomOnly(registryLookup);
 	}
 
-	public static void tick(World world, BlockPos pos, BlockState state, NPCHousingBlockEntity blockEntity) {
-		if (!world.isClient() && world.getTime() % 20L == 0L) {
+	public static void tick(Level world, BlockPos pos, BlockState state, NPCHousingBlockEntity blockEntity) {
+		if (!world.isClientSide() && world.getGameTime() % 20L == 0L) {
 //			if (blockEntity.hasWorld() && !blockEntity.isOwnerSet && blockEntity.ownerMode == OwnerMode.DIMENSION_OWNER) {
 //				blockEntity.ownerUuid = initOwner(blockEntity.world);
 //				if (UUIDUtilities.isStringValidUUID(blockEntity.ownerUuid)) {
@@ -85,13 +81,13 @@ public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ imp
 //				}
 //			}
 
-			Box box = new Box(
-					blockEntity.pos.getX() + blockEntity.influenceAreaPositionOffset.getX(),
-					blockEntity.pos.getY() + blockEntity.influenceAreaPositionOffset.getY(),
-					blockEntity.pos.getZ() + blockEntity.influenceAreaPositionOffset.getZ(),
-					blockEntity.pos.getX() + blockEntity.influenceAreaPositionOffset.getX() + blockEntity.influenceAreaDimensions.getX(),
-					blockEntity.pos.getY() + blockEntity.influenceAreaPositionOffset.getY() + blockEntity.influenceAreaDimensions.getY(),
-					blockEntity.pos.getZ() + blockEntity.influenceAreaPositionOffset.getZ() + blockEntity.influenceAreaDimensions.getZ()
+			AABB box = new AABB(
+					blockEntity.worldPosition.getX() + blockEntity.influenceAreaPositionOffset.getX(),
+					blockEntity.worldPosition.getY() + blockEntity.influenceAreaPositionOffset.getY(),
+					blockEntity.worldPosition.getZ() + blockEntity.influenceAreaPositionOffset.getZ(),
+					blockEntity.worldPosition.getX() + blockEntity.influenceAreaPositionOffset.getX() + blockEntity.influenceAreaDimensions.getX(),
+					blockEntity.worldPosition.getY() + blockEntity.influenceAreaPositionOffset.getY() + blockEntity.influenceAreaDimensions.getY(),
+					blockEntity.worldPosition.getZ() + blockEntity.influenceAreaPositionOffset.getZ() + blockEntity.influenceAreaDimensions.getZ()
 			);
 //			List<PlayerEntity> list = world.getNonSpectatingEntities(PlayerEntity.class, box);
 //			Iterator var11 = list.iterator();
@@ -148,12 +144,12 @@ public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ imp
 	}
 
 	public boolean influenceAreaContains(BlockPos pos) {
-		return (double) (pos.getX() + 1) > (this.pos.getX() + this.influenceAreaPositionOffset.getX())
-				&& (double) pos.getX() < (this.pos.getX() + this.influenceAreaPositionOffset.getX() + this.influenceAreaDimensions.getX())
-				&& (double) (pos.getY() + 1) > (this.pos.getY() + this.influenceAreaPositionOffset.getY())
-				&& (double) pos.getY() < (this.pos.getY() + this.influenceAreaPositionOffset.getY() + this.influenceAreaDimensions.getY())
-				&& (double) (pos.getZ() + 1) > (this.pos.getZ() + this.influenceAreaPositionOffset.getZ())
-				&& (double) pos.getZ() < (this.pos.getZ() + this.influenceAreaPositionOffset.getZ() + this.influenceAreaDimensions.getZ());
+		return (double) (pos.getX() + 1) > (this.worldPosition.getX() + this.influenceAreaPositionOffset.getX())
+				&& (double) pos.getX() < (this.worldPosition.getX() + this.influenceAreaPositionOffset.getX() + this.influenceAreaDimensions.getX())
+				&& (double) (pos.getY() + 1) > (this.worldPosition.getY() + this.influenceAreaPositionOffset.getY())
+				&& (double) pos.getY() < (this.worldPosition.getY() + this.influenceAreaPositionOffset.getY() + this.influenceAreaDimensions.getY())
+				&& (double) (pos.getZ() + 1) > (this.worldPosition.getZ() + this.influenceAreaPositionOffset.getZ())
+				&& (double) pos.getZ() < (this.worldPosition.getZ() + this.influenceAreaPositionOffset.getZ() + this.influenceAreaDimensions.getZ());
 	}
 
 //	@Override
@@ -185,7 +181,7 @@ public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ imp
 //	}
 
 	public static HouseStatus checkHouseStatus(NPCHousingBlockEntity npcHousingBlockEntity) {
-		if (npcHousingBlockEntity.getWorld() instanceof ServerWorld serverWorld) {
+		if (npcHousingBlockEntity.getLevel() instanceof ServerLevel serverWorld) {
 			Vec3i vec3i = npcHousingBlockEntity.getInfluenceAreaDimensions();
 			int nx = vec3i.getX();
 			int ny = vec3i.getY();
@@ -203,30 +199,30 @@ public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ imp
 			for (int x = 0; x < nx; x++) {
 				for (int y = 0; y < ny; y++) {
 					for (int z = 0; z < nz; z++) {
-						blockPos = npcHousingBlockEntity.pos.add(x, y, z);
+						blockPos = npcHousingBlockEntity.worldPosition.offset(x, y, z);
 						blockState = serverWorld.getBlockState(blockPos);
 						if ((x == 0 || x == (nx - 1)) && y > 0 && y < (ny - 1) &&  z > 0 && z < (nz - 1)) {
-							if (!blockState.isIn(Tags.WALL_BLOCKS)) {
+							if (!blockState.is(Tags.WALL_BLOCKS)) {
 								return HouseStatus.INVALID;
 							}
 						}
 						if (x > 0 && x < (nx - 1) && y > 0 && y < (ny - 1) && (z == 0 || z == (nz - 1))) {
-							if (!blockState.isIn(Tags.WALL_BLOCKS)) {
+							if (!blockState.is(Tags.WALL_BLOCKS)) {
 								return HouseStatus.INVALID;
 							}
 						}
 						if (x > 0 && x < (nx - 1) && (y == 0 || y == (ny - 1)) && z > 0 && z < (nz - 1)) {
-							if (!blockState.isIn(Tags.FLOOR_BLOCKS)) {
+							if (!blockState.is(Tags.FLOOR_BLOCKS)) {
 								return HouseStatus.INVALID;
 							}
 						}
 						if (x > 0 && x < (nx - 1) && y > 0 && y < (ny - 1) && z > 0 && z < (nz - 1)) {
-							hasLight = blockState.isIn(Tags.LIGHT_BLOCKS);
-							hasChair = blockState.isIn(Tags.CHAIR_BLOCKS);
-							hasTable = blockState.isIn(Tags.TABLE_BLOCKS);
+							hasLight = blockState.is(Tags.LIGHT_BLOCKS);
+							hasChair = blockState.is(Tags.CHAIR_BLOCKS);
+							hasTable = blockState.is(Tags.TABLE_BLOCKS);
 						}
 						if (blockState.isAir() && !hasSpace) {
-							hasSpace = serverWorld.getBlockState(npcHousingBlockEntity.pos.add(0, 1, 0)).isAir();
+							hasSpace = serverWorld.getBlockState(npcHousingBlockEntity.worldPosition.offset(0, 1, 0)).isAir();
 						}
 					}
 
@@ -240,15 +236,15 @@ public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ imp
 		return HouseStatus.IS_CLIENT;
 	}
 
-	public StructureBoxRendering.RenderMode getRenderMode() {
+	public BoundingBoxRenderable.Mode renderMode() {
 		if (this.showInfluenceArea) {
-			return RenderMode.BOX_AND_INVISIBLE_BLOCKS;
+			return Mode.BOX_AND_INVISIBLE_BLOCKS;
 		} else {
-			return RenderMode.NONE;
+			return Mode.NONE;
 		}
 	}
 
-	public StructureBoxRendering.StructureBox getStructureBox() {
+	public BoundingBoxRenderable.RenderableBox getRenderableBox() {
 //		BlockPos blockPos = this.getOffset();
 //		Vec3i vec3i = this.getSize();
 //		int i = blockPos.getX();
@@ -302,17 +298,17 @@ public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ imp
 //		}
 //
 //		return StructureBox.create(o, k, p, q, l, r);
-		return StructureBox.create(
-				this.pos.getX() + this.influenceAreaPositionOffset.getX(),
-				this.pos.getY() + this.influenceAreaPositionOffset.getY(),
-				this.pos.getZ() + this.influenceAreaPositionOffset.getZ(),
-				this.pos.getX() + this.influenceAreaPositionOffset.getX() + this.influenceAreaDimensions.getX(),
-				this.pos.getY() + this.influenceAreaPositionOffset.getY() + this.influenceAreaDimensions.getY(),
-				this.pos.getZ() + this.influenceAreaPositionOffset.getZ() + this.influenceAreaDimensions.getZ()
+		return RenderableBox.fromCorners(
+				this.worldPosition.getX() + this.influenceAreaPositionOffset.getX(),
+				this.worldPosition.getY() + this.influenceAreaPositionOffset.getY(),
+				this.worldPosition.getZ() + this.influenceAreaPositionOffset.getZ(),
+				this.worldPosition.getX() + this.influenceAreaPositionOffset.getX() + this.influenceAreaDimensions.getX(),
+				this.worldPosition.getY() + this.influenceAreaPositionOffset.getY() + this.influenceAreaDimensions.getY(),
+				this.worldPosition.getZ() + this.influenceAreaPositionOffset.getZ() + this.influenceAreaDimensions.getZ()
 		);
 	}
 
-	public static enum HouseStatus implements StringIdentifiable {
+	public static enum HouseStatus implements StringRepresentable {
 		VALID("valid", true),
 		INVALID("invalid", false),
 		IS_CLIENT("is_client", false);
@@ -326,7 +322,7 @@ public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ imp
 		}
 
 		@Override
-		public String asString() {
+		public String getSerializedName() {
 			return this.name;
 		}
 
@@ -335,11 +331,11 @@ public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ imp
 		}
 
 		public static Optional<HouseStatus> byName(String name) {
-			return Arrays.stream(HouseStatus.values()).filter(houseStatus -> houseStatus.asString().equals(name)).findFirst();
+			return Arrays.stream(HouseStatus.values()).filter(houseStatus -> houseStatus.getSerializedName().equals(name)).findFirst();
 		}
 
-		public Text asText() {
-			return Text.translatable("gui.teleporter_block.spawn_point_type." + this.name);
+		public Component asText() {
+			return Component.translatable("gui.teleporter_block.spawn_point_type." + this.name);
 		}
 	}
 }

@@ -4,14 +4,9 @@ import com.github.theredbrain.npchousing.NPCHousing;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.PersistentState;
-import net.minecraft.world.World;
+import net.minecraft.world.level.saveddata.SavedData;
 
-public class DataAttachmentRegistry extends PersistentState {
+public class DataAttachmentRegistry extends SavedData {
 //	@Override
 //	public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
 //		return null;

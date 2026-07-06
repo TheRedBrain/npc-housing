@@ -4,20 +4,19 @@ import com.github.theredbrain.npchousing.NPCHousing;
 import com.github.theredbrain.npchousing.block.entity.NPCHousingBlockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.CyclingButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.util.NarratorManager;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.StringIdentifiable;
+import net.minecraft.client.GameNarrator;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.StringRepresentable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -28,42 +27,42 @@ import java.util.Optional;
 @Environment(value = EnvType.CLIENT)
 public class NPCHousingScreen extends Screen {
 	// adventure
-	private static final Text TITLE_OWNER_LABEL_TEXT = Text.translatable("gui.housing_screen.title.owner");
-	private static final Text TITLE_CO_OWNER_LABEL_TEXT = Text.translatable("gui.housing_screen.title.co_owner");
-	private static final Text TITLE_CO_OWNER_LIST_LABEL_TEXT = Text.translatable("gui.housing_screen.co_owner_list.title");
-	private static final Text TITLE_CO_OWNER_LIST_DESCRIPTION_LABEL_TEXT = Text.translatable("gui.housing_screen.co_owner_list.description");
-	private static final Text TITLE_TRUSTED_LABEL_TEXT = Text.translatable("gui.housing_screen.title.trusted");
-	private static final Text TITLE_TRUSTED_LIST_LABEL_TEXT = Text.translatable("gui.housing_screen.trusted_list.title");
-	private static final Text TITLE_TRUSTED_LIST_DESCRIPTION_LABEL_TEXT = Text.translatable("gui.housing_screen.trusted_list.description");
-	private static final Text TITLE_GUEST_LABEL_TEXT = Text.translatable("gui.housing_screen.title.guest");
-	private static final Text TITLE_GUEST_LIST_LABEL_TEXT = Text.translatable("gui.housing_screen.guest_list.title");
-	private static final Text TITLE_GUEST_LIST_DESCRIPTION_LABEL_TEXT = Text.translatable("gui.housing_screen.guest_list.description");
-	private static final Text TITLE_STRANGER_LABEL_TEXT = Text.translatable("gui.housing_screen.title.stranger");
-	private static final Text LEAVE_CURRENT_HOUSE_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.leave_current_house_button_label");
-	private static final Text OPEN_RESET_HOUSE_SCREEN_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.open_reset_house_screen_button_label");
-	private static final Text TOGGLE_ADVENTURE_BUILDING_OFF_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.toggle_adventure_building_off_button_label");
-	private static final Text TOGGLE_ADVENTURE_BUILDING_ON_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.toggle_adventure_building_on_button_label");
-	private static final Text UNCLAIM_HOUSE_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.unclaim_house_button_label");
-	private static final Text CLAIM_HOUSE_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.claim_house_button_label");
-	private static final Text OPEN_CO_OWNER_LIST_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.open_co_owner_list_button_label");
-	private static final Text NEW_CO_OWNER_FIELD_PLACEHOLDER_TEXT = Text.translatable("gui.housing_screen.new_co_owner_field.place_holder");
-	private static final Text ADD_NEW_CO_OWNER_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.add_new_co_owner_button_label");
-	private static final Text OPEN_TRUSTED_PERSONS_LIST_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.open_trusted_list_button_label");
-	private static final Text NEW_TRUSTED_PERSON_FIELD_PLACEHOLDER_TEXT = Text.translatable("gui.housing_screen.new_trusted_person_field.place_holder");
-	private static final Text ADD_NEW_TRUSTED_PERSON_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.add_new_trusted_person_button_label");
-	private static final Text OPEN_GUEST_LIST_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.open_guest_list_button_label");
-	private static final Text NEW_GUEST_FIELD_PLACEHOLDER_TEXT = Text.translatable("gui.housing_screen.new_guest_field.place_holder");
-	private static final Text ADD_NEW_GUEST_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.add_new_guest_button_label");
-	private static final Text REMOVE_LIST_ENTRY_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_screen.remove_list_entry_button_label");
+	private static final Component TITLE_OWNER_LABEL_TEXT = Component.translatable("gui.housing_screen.title.owner");
+	private static final Component TITLE_CO_OWNER_LABEL_TEXT = Component.translatable("gui.housing_screen.title.co_owner");
+	private static final Component TITLE_CO_OWNER_LIST_LABEL_TEXT = Component.translatable("gui.housing_screen.co_owner_list.title");
+	private static final Component TITLE_CO_OWNER_LIST_DESCRIPTION_LABEL_TEXT = Component.translatable("gui.housing_screen.co_owner_list.description");
+	private static final Component TITLE_TRUSTED_LABEL_TEXT = Component.translatable("gui.housing_screen.title.trusted");
+	private static final Component TITLE_TRUSTED_LIST_LABEL_TEXT = Component.translatable("gui.housing_screen.trusted_list.title");
+	private static final Component TITLE_TRUSTED_LIST_DESCRIPTION_LABEL_TEXT = Component.translatable("gui.housing_screen.trusted_list.description");
+	private static final Component TITLE_GUEST_LABEL_TEXT = Component.translatable("gui.housing_screen.title.guest");
+	private static final Component TITLE_GUEST_LIST_LABEL_TEXT = Component.translatable("gui.housing_screen.guest_list.title");
+	private static final Component TITLE_GUEST_LIST_DESCRIPTION_LABEL_TEXT = Component.translatable("gui.housing_screen.guest_list.description");
+	private static final Component TITLE_STRANGER_LABEL_TEXT = Component.translatable("gui.housing_screen.title.stranger");
+	private static final Component LEAVE_CURRENT_HOUSE_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.leave_current_house_button_label");
+	private static final Component OPEN_RESET_HOUSE_SCREEN_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.open_reset_house_screen_button_label");
+	private static final Component TOGGLE_ADVENTURE_BUILDING_OFF_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.toggle_adventure_building_off_button_label");
+	private static final Component TOGGLE_ADVENTURE_BUILDING_ON_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.toggle_adventure_building_on_button_label");
+	private static final Component UNCLAIM_HOUSE_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.unclaim_house_button_label");
+	private static final Component CLAIM_HOUSE_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.claim_house_button_label");
+	private static final Component OPEN_CO_OWNER_LIST_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.open_co_owner_list_button_label");
+	private static final Component NEW_CO_OWNER_FIELD_PLACEHOLDER_TEXT = Component.translatable("gui.housing_screen.new_co_owner_field.place_holder");
+	private static final Component ADD_NEW_CO_OWNER_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.add_new_co_owner_button_label");
+	private static final Component OPEN_TRUSTED_PERSONS_LIST_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.open_trusted_list_button_label");
+	private static final Component NEW_TRUSTED_PERSON_FIELD_PLACEHOLDER_TEXT = Component.translatable("gui.housing_screen.new_trusted_person_field.place_holder");
+	private static final Component ADD_NEW_TRUSTED_PERSON_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.add_new_trusted_person_button_label");
+	private static final Component OPEN_GUEST_LIST_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.open_guest_list_button_label");
+	private static final Component NEW_GUEST_FIELD_PLACEHOLDER_TEXT = Component.translatable("gui.housing_screen.new_guest_field.place_holder");
+	private static final Component ADD_NEW_GUEST_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.add_new_guest_button_label");
+	private static final Component REMOVE_LIST_ENTRY_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_screen.remove_list_entry_button_label");
 
 	// creative
-	private static final Text HIDE_INFLUENCE_AREA_LABEL_TEXT = Text.translatable("gui.housing_screen.hide_influence_area_label");
-	private static final Text SHOW_INFLUENCE_AREA_LABEL_TEXT = Text.translatable("gui.housing_screen.show_influence_area_label");
-	private static final Text INFLUENCE_AREA_DIMENSIONS_LABEL_TEXT = Text.translatable("gui.housing_screen.influence_area_dimensions_label");
-	private static final Text INFLUENCE_AREA_POSITION_OFFET_LABEL_TEXT = Text.translatable("gui.housing_screen.influence_area_position_offset_label");
-	private static final Text RESET_OWNER_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_block.reset_owner_button_label");
-	private static final Text TRIGGERED_BLOCK_POSITION_OFFSET_LABEL_TEXT = Text.translatable("gui.triggered_block.triggeredBlockPositionOffset");
-	public static final Identifier BACKGROUND_176_166_TEXTURE = Identifier.of("scriptblocks", "textures/gui/container/generic_176_166_background.png");
+	private static final Component HIDE_INFLUENCE_AREA_LABEL_TEXT = Component.translatable("gui.housing_screen.hide_influence_area_label");
+	private static final Component SHOW_INFLUENCE_AREA_LABEL_TEXT = Component.translatable("gui.housing_screen.show_influence_area_label");
+	private static final Component INFLUENCE_AREA_DIMENSIONS_LABEL_TEXT = Component.translatable("gui.housing_screen.influence_area_dimensions_label");
+	private static final Component INFLUENCE_AREA_POSITION_OFFET_LABEL_TEXT = Component.translatable("gui.housing_screen.influence_area_position_offset_label");
+	private static final Component RESET_OWNER_BUTTON_LABEL_TEXT = Component.translatable("gui.housing_block.reset_owner_button_label");
+	private static final Component TRIGGERED_BLOCK_POSITION_OFFSET_LABEL_TEXT = Component.translatable("gui.triggered_block.triggeredBlockPositionOffset");
+	public static final Identifier BACKGROUND_176_166_TEXTURE = Identifier.fromNamespaceAndPath("scriptblocks", "textures/gui/container/generic_176_166_background.png");
 	public static final Identifier BACKGROUND_218_95_TEXTURE = NPCHousing.identifier("textures/gui/container/generic_218_95_background.png");
 	public static final Identifier BACKGROUND_218_71_TEXTURE = NPCHousing.identifier("textures/gui/container/generic_218_71_background.png");
 	private static final Identifier PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE = NPCHousing.identifier("container/housing_screen/player_lists_scroller_background");
@@ -82,14 +81,14 @@ public class NPCHousingScreen extends Screen {
 //	private ButtonWidget unclaimHouseButton;
 //	private ButtonWidget claimHouseButton;
 
-	private ButtonWidget openCoOwnerListScreenButton;
-	private TextFieldWidget newCoOwnerField;
-	private ButtonWidget addNewCoOwnerButton;
-	private ButtonWidget removeCoOwnerListEntryButton0;
-	private ButtonWidget removeCoOwnerListEntryButton1;
-	private ButtonWidget removeCoOwnerListEntryButton2;
-	private ButtonWidget removeCoOwnerListEntryButton3;
-	private ButtonWidget removeCoOwnerListEntryButton4;
+	private Button openCoOwnerListScreenButton;
+	private EditBox newCoOwnerField;
+	private Button addNewCoOwnerButton;
+	private Button removeCoOwnerListEntryButton0;
+	private Button removeCoOwnerListEntryButton1;
+	private Button removeCoOwnerListEntryButton2;
+	private Button removeCoOwnerListEntryButton3;
+	private Button removeCoOwnerListEntryButton4;
 
 //	private ButtonWidget openTrustedPersonsListScreenButton;
 //	private TextFieldWidget newTrustedPersonField;
@@ -109,19 +108,19 @@ public class NPCHousingScreen extends Screen {
 //	private ButtonWidget removeGuestListEntryButton3;
 //	private ButtonWidget removeGuestListEntryButton4;
 
-	private ButtonWidget closeListEditScreensButton;
+	private Button closeListEditScreensButton;
 
 	//	private ButtonWidget closeAdventureScreenButton;
 	//endregion adventure widgets
 	//region creative widgets
-	private CyclingButtonWidget<CreativeScreenPage> creativeScreenPageButton;
-	private CyclingButtonWidget<Boolean> showRestrictBlockBreakingAreaButton;
-	private TextFieldWidget restrictBlockBreakingAreaDimensionsXField;
-	private TextFieldWidget restrictBlockBreakingAreaDimensionsYField;
-	private TextFieldWidget restrictBlockBreakingAreaDimensionsZField;
-	private TextFieldWidget restrictBlockBreakingAreaPositionOffsetXField;
-	private TextFieldWidget restrictBlockBreakingAreaPositionOffsetYField;
-	private TextFieldWidget restrictBlockBreakingAreaPositionOffsetZField;
+	private CycleButton<CreativeScreenPage> creativeScreenPageButton;
+	private CycleButton<Boolean> showRestrictBlockBreakingAreaButton;
+	private EditBox restrictBlockBreakingAreaDimensionsXField;
+	private EditBox restrictBlockBreakingAreaDimensionsYField;
+	private EditBox restrictBlockBreakingAreaDimensionsZField;
+	private EditBox restrictBlockBreakingAreaPositionOffsetXField;
+	private EditBox restrictBlockBreakingAreaPositionOffsetYField;
+	private EditBox restrictBlockBreakingAreaPositionOffsetZField;
 	//	private TextFieldWidget triggeredBlockPositionOffsetXField;
 //	private TextFieldWidget triggeredBlockPositionOffsetYField;
 //	private TextFieldWidget triggeredBlockPositionOffsetZField;
@@ -129,8 +128,8 @@ public class NPCHousingScreen extends Screen {
 //	private boolean triggeredBlockResets;
 //	private CyclingButtonWidget<HousingBlockEntity.OwnerMode> toggleOwnerModeButton;
 //	private ButtonWidget resetOwnerButton;
-	private ButtonWidget saveCreativeButton;
-	private ButtonWidget cancelCreativeButton;
+	private Button saveCreativeButton;
+	private Button cancelCreativeButton;
 	//endregion creative widgets
 	private CreativeScreenPage creativeScreenPage;
 	private List<String> unlockedNPCs = new ArrayList<>(List.of());
@@ -151,7 +150,7 @@ public class NPCHousingScreen extends Screen {
 //	private HousingBlockEntity.OwnerMode ownerMode = HousingBlockEntity.OwnerMode.DIMENSION_OWNER;
 
 	public NPCHousingScreen(NPCHousingBlockEntity npcHousingBlockEntity) {
-		super(NarratorManager.EMPTY);
+		super(GameNarrator.NO_TITLE);
 		this.npcHousingBlockEntity = npcHousingBlockEntity;
 		this.creativeScreenPage = CreativeScreenPage.HOUSE;
 	}
@@ -217,12 +216,12 @@ public class NPCHousingScreen extends Screen {
 
 	private void done() {
 		this.updateNPCHousingBlock();
-		this.close();
+		this.onClose();
 	}
 
 	private void cancel() {
 		// TODO reset blockEntity?
-		this.close();
+		this.onClose();
 	}
 
 //	private void leaveCurrentHouse() {
@@ -326,46 +325,46 @@ public class NPCHousingScreen extends Screen {
 		//endregion adventure screen
 
 		//region creative screen
-		this.creativeScreenPageButton = this.addDrawableChild(CyclingButtonWidget.builder(CreativeScreenPage::asText, this.creativeScreenPage).values((CreativeScreenPage[]) CreativeScreenPage.values()).omitKeyText().build(this.width / 2 - 154, 20, 300, 20, Text.empty(), (button, creativeScreenPage) -> {
+		this.creativeScreenPageButton = this.addRenderableWidget(CycleButton.builder(CreativeScreenPage::asText, this.creativeScreenPage).withValues((CreativeScreenPage[]) CreativeScreenPage.values()).displayOnlyValue().create(this.width / 2 - 154, 20, 300, 20, Component.empty(), (button, creativeScreenPage) -> {
 			this.creativeScreenPage = creativeScreenPage;
 			this.updateWidgets();
 		}));
 
 		// --- influence area page ---
 
-		this.showRestrictBlockBreakingAreaButton = this.addDrawableChild(CyclingButtonWidget.onOffBuilder(HIDE_INFLUENCE_AREA_LABEL_TEXT, SHOW_INFLUENCE_AREA_LABEL_TEXT, this.showInfluenceArea).omitKeyText().build(this.width / 2 - 153, 45, 300, 20, Text.empty(), (button, showInfluenceArea) -> {
+		this.showRestrictBlockBreakingAreaButton = this.addRenderableWidget(CycleButton.booleanBuilder(HIDE_INFLUENCE_AREA_LABEL_TEXT, SHOW_INFLUENCE_AREA_LABEL_TEXT, this.showInfluenceArea).displayOnlyValue().create(this.width / 2 - 153, 45, 300, 20, Component.empty(), (button, showInfluenceArea) -> {
 			this.showInfluenceArea = showInfluenceArea;
 		}));
 
-		this.restrictBlockBreakingAreaDimensionsXField = new TextFieldWidget(this.textRenderer, this.width / 2 - 154, 80, 100, 20, Text.empty());
+		this.restrictBlockBreakingAreaDimensionsXField = new EditBox(this.font, this.width / 2 - 154, 80, 100, 20, Component.empty());
 		this.restrictBlockBreakingAreaDimensionsXField.setMaxLength(128);
-		this.restrictBlockBreakingAreaDimensionsXField.setText(Integer.toString(this.npcHousingBlockEntity != null ? this.npcHousingBlockEntity.getInfluenceAreaDimensions().getX() : 0));
-		this.addSelectableChild(this.restrictBlockBreakingAreaDimensionsXField);
+		this.restrictBlockBreakingAreaDimensionsXField.setValue(Integer.toString(this.npcHousingBlockEntity != null ? this.npcHousingBlockEntity.getInfluenceAreaDimensions().getX() : 0));
+		this.addWidget(this.restrictBlockBreakingAreaDimensionsXField);
 
-		this.restrictBlockBreakingAreaDimensionsYField = new TextFieldWidget(this.textRenderer, this.width / 2 - 50, 80, 100, 20, Text.empty());
+		this.restrictBlockBreakingAreaDimensionsYField = new EditBox(this.font, this.width / 2 - 50, 80, 100, 20, Component.empty());
 		this.restrictBlockBreakingAreaDimensionsYField.setMaxLength(128);
-		this.restrictBlockBreakingAreaDimensionsYField.setText(Integer.toString(this.npcHousingBlockEntity != null ? this.npcHousingBlockEntity.getInfluenceAreaDimensions().getY() : 0));
-		this.addSelectableChild(this.restrictBlockBreakingAreaDimensionsYField);
+		this.restrictBlockBreakingAreaDimensionsYField.setValue(Integer.toString(this.npcHousingBlockEntity != null ? this.npcHousingBlockEntity.getInfluenceAreaDimensions().getY() : 0));
+		this.addWidget(this.restrictBlockBreakingAreaDimensionsYField);
 
-		this.restrictBlockBreakingAreaDimensionsZField = new TextFieldWidget(this.textRenderer, this.width / 2 + 54, 80, 100, 20, Text.empty());
+		this.restrictBlockBreakingAreaDimensionsZField = new EditBox(this.font, this.width / 2 + 54, 80, 100, 20, Component.empty());
 		this.restrictBlockBreakingAreaDimensionsZField.setMaxLength(128);
-		this.restrictBlockBreakingAreaDimensionsZField.setText(Integer.toString(this.npcHousingBlockEntity != null ? this.npcHousingBlockEntity.getInfluenceAreaDimensions().getZ() : 0));
-		this.addSelectableChild(this.restrictBlockBreakingAreaDimensionsZField);
+		this.restrictBlockBreakingAreaDimensionsZField.setValue(Integer.toString(this.npcHousingBlockEntity != null ? this.npcHousingBlockEntity.getInfluenceAreaDimensions().getZ() : 0));
+		this.addWidget(this.restrictBlockBreakingAreaDimensionsZField);
 
-		this.restrictBlockBreakingAreaPositionOffsetXField = new TextFieldWidget(this.textRenderer, this.width / 2 - 154, 115, 100, 20, Text.empty());
+		this.restrictBlockBreakingAreaPositionOffsetXField = new EditBox(this.font, this.width / 2 - 154, 115, 100, 20, Component.empty());
 		this.restrictBlockBreakingAreaPositionOffsetXField.setMaxLength(128);
-		this.restrictBlockBreakingAreaPositionOffsetXField.setText(Integer.toString(this.npcHousingBlockEntity != null ? this.npcHousingBlockEntity.getRestrictBlockBreakingAreaPositionOffset().getX() : 0));
-		this.addSelectableChild(this.restrictBlockBreakingAreaPositionOffsetXField);
+		this.restrictBlockBreakingAreaPositionOffsetXField.setValue(Integer.toString(this.npcHousingBlockEntity != null ? this.npcHousingBlockEntity.getRestrictBlockBreakingAreaPositionOffset().getX() : 0));
+		this.addWidget(this.restrictBlockBreakingAreaPositionOffsetXField);
 
-		this.restrictBlockBreakingAreaPositionOffsetYField = new TextFieldWidget(this.textRenderer, this.width / 2 - 50, 115, 100, 20, Text.empty());
+		this.restrictBlockBreakingAreaPositionOffsetYField = new EditBox(this.font, this.width / 2 - 50, 115, 100, 20, Component.empty());
 		this.restrictBlockBreakingAreaPositionOffsetYField.setMaxLength(128);
-		this.restrictBlockBreakingAreaPositionOffsetYField.setText(Integer.toString(this.npcHousingBlockEntity != null ? this.npcHousingBlockEntity.getRestrictBlockBreakingAreaPositionOffset().getY() : 0));
-		this.addSelectableChild(this.restrictBlockBreakingAreaPositionOffsetYField);
+		this.restrictBlockBreakingAreaPositionOffsetYField.setValue(Integer.toString(this.npcHousingBlockEntity != null ? this.npcHousingBlockEntity.getRestrictBlockBreakingAreaPositionOffset().getY() : 0));
+		this.addWidget(this.restrictBlockBreakingAreaPositionOffsetYField);
 
-		this.restrictBlockBreakingAreaPositionOffsetZField = new TextFieldWidget(this.textRenderer, this.width / 2 + 54, 115, 100, 20, Text.empty());
+		this.restrictBlockBreakingAreaPositionOffsetZField = new EditBox(this.font, this.width / 2 + 54, 115, 100, 20, Component.empty());
 		this.restrictBlockBreakingAreaPositionOffsetZField.setMaxLength(128);
-		this.restrictBlockBreakingAreaPositionOffsetZField.setText(Integer.toString(this.npcHousingBlockEntity != null ? this.npcHousingBlockEntity.getRestrictBlockBreakingAreaPositionOffset().getZ() : 0));
-		this.addSelectableChild(this.restrictBlockBreakingAreaPositionOffsetZField);
+		this.restrictBlockBreakingAreaPositionOffsetZField.setValue(Integer.toString(this.npcHousingBlockEntity != null ? this.npcHousingBlockEntity.getRestrictBlockBreakingAreaPositionOffset().getZ() : 0));
+		this.addWidget(this.restrictBlockBreakingAreaPositionOffsetZField);
 
 //		// --- triggered block page ---
 //
@@ -396,8 +395,8 @@ public class NPCHousingScreen extends Screen {
 //
 //		this.resetOwnerButton = this.addDrawableChild(ButtonWidget.builder(RESET_OWNER_BUTTON_LABEL_TEXT, button -> this.trySetHouseOwner(false)).dimensions(this.width / 2 - 4 - 150, 94, 300, 20).build());
 
-		this.saveCreativeButton = this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.done()).dimensions(this.width / 2 - 4 - 150, 210, 150, 20).build());
-		this.cancelCreativeButton = this.addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, button -> this.cancel()).dimensions(this.width / 2 + 4, 210, 150, 20).build());
+		this.saveCreativeButton = this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> this.done()).bounds(this.width / 2 - 4 - 150, 210, 150, 20).build());
+		this.cancelCreativeButton = this.addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> this.cancel()).bounds(this.width / 2 + 4, 210, 150, 20).build());
 
 		//endregion creative screen
 		this.updateWidgets();
@@ -660,7 +659,7 @@ public class NPCHousingScreen extends Screen {
 
 
 	@Override
-	public boolean mouseClicked(Click click, boolean doubled) {
+	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
 //		this.mouseClicked = false;
 //		if (!this.showCreativeTab
 //				&& ((this.showCoOwnerListScreen && this.unlockedNPCs.size() > 5)
@@ -676,7 +675,7 @@ public class NPCHousingScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+	public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
 //		if (!this.showCreativeTab
 //				&& this.showCoOwnerListScreen
 //				&& this.unlockedNPCs.size() > 5
@@ -743,8 +742,8 @@ public class NPCHousingScreen extends Screen {
 	}
 
 	@Override
-	public boolean keyPressed(KeyInput input) {
-		if (input.isEnter()) {
+	public boolean keyPressed(KeyEvent input) {
+		if (input.isConfirmation()) {
 			this.done();
 			return true;
 		}
@@ -752,17 +751,17 @@ public class NPCHousingScreen extends Screen {
 	}
 
 	@Override
-	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
 
 //		this.renderBackground(context, mouseX, mouseY, delta);
 
 //		if (this.showCreativeTab) {
 		if (this.creativeScreenPage == CreativeScreenPage.HOUSE) {
-			context.drawText(this.textRenderer, INFLUENCE_AREA_DIMENSIONS_LABEL_TEXT, this.width / 2 - 153, 70, 0xA0A0A0, false);
+			context.drawString(this.font, INFLUENCE_AREA_DIMENSIONS_LABEL_TEXT, this.width / 2 - 153, 70, 0xA0A0A0, false);
 			this.restrictBlockBreakingAreaDimensionsXField.render(context, mouseX, mouseY, delta);
 			this.restrictBlockBreakingAreaDimensionsYField.render(context, mouseX, mouseY, delta);
 			this.restrictBlockBreakingAreaDimensionsZField.render(context, mouseX, mouseY, delta);
-			context.drawText(this.textRenderer, INFLUENCE_AREA_POSITION_OFFET_LABEL_TEXT, this.width / 2 - 153, 105, 0xA0A0A0, false);
+			context.drawString(this.font, INFLUENCE_AREA_POSITION_OFFET_LABEL_TEXT, this.width / 2 - 153, 105, 0xA0A0A0, false);
 			this.restrictBlockBreakingAreaPositionOffsetXField.render(context, mouseX, mouseY, delta);
 			this.restrictBlockBreakingAreaPositionOffsetYField.render(context, mouseX, mouseY, delta);
 			this.restrictBlockBreakingAreaPositionOffsetZField.render(context, mouseX, mouseY, delta);
@@ -839,17 +838,17 @@ public class NPCHousingScreen extends Screen {
 
 
 	@Override
-	public boolean shouldPause() {
+	public boolean isPauseScreen() {
 		return false;
 	}
 
 	@Override
-	public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta) {
 		super.renderBackground(context, mouseX, mouseY, delta);
 		this.drawBackground(context, delta, mouseX, mouseY);
 	}
 
-	public void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
+	public void drawBackground(GuiGraphics context, float delta, int mouseX, int mouseY) {
 //		if (!this.showCreativeTab) {
 		int i = this.x;
 		int j = this.y;
@@ -858,7 +857,7 @@ public class NPCHousingScreen extends Screen {
 //			} else if (this.currentPermissionLevel == 1 || this.ownerMode == HousingBlockEntity.OwnerMode.INTERACTION) {
 //				context.drawTexture(BACKGROUND_218_95_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 //			} else {
-		context.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_176_166_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+		context.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND_176_166_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 //			}
 //		}
 	}
@@ -935,7 +934,7 @@ public class NPCHousingScreen extends Screen {
 //		this.close();
 //	}
 //
-	public static enum CreativeScreenPage implements StringIdentifiable {
+	public static enum CreativeScreenPage implements StringRepresentable {
 		HOUSE("house"),
 		RESIDENT("resident");
 
@@ -946,16 +945,16 @@ public class NPCHousingScreen extends Screen {
 		}
 
 		@Override
-		public String asString() {
+		public String getSerializedName() {
 			return this.name;
 		}
 
 		public static Optional<CreativeScreenPage> byName(String name) {
-			return Arrays.stream(CreativeScreenPage.values()).filter(creativeScreenPage -> creativeScreenPage.asString().equals(name)).findFirst();
+			return Arrays.stream(CreativeScreenPage.values()).filter(creativeScreenPage -> creativeScreenPage.getSerializedName().equals(name)).findFirst();
 		}
 
-		public Text asText() {
-			return Text.translatable("gui.housing_screen.creativeScreenPage." + this.name);
+		public Component asText() {
+			return Component.translatable("gui.housing_screen.creativeScreenPage." + this.name);
 		}
 	}
 }

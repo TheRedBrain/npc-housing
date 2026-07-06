@@ -6,38 +6,38 @@ import com.github.theredbrain.npchousing.gui.screen.ingame.NPCHousingScreen;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Environment(EnvType.CLIENT)
-@Mixin(ClientPlayerEntity.class)
-public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements DuckPlayerEntityMixin {
+@Mixin(LocalPlayer.class)
+public abstract class ClientPlayerEntityMixin extends AbstractClientPlayer implements DuckPlayerEntityMixin {
 
 	@Shadow
 	@Final
-	protected MinecraftClient client;
+	protected Minecraft minecraft;
 
 	@Shadow
 	public abstract boolean isUsingItem();
 
 	@Shadow
-	public abstract float getPitch(float tickDelta);
+	public abstract float getViewXRot(float tickDelta);
 
 	@Shadow
-	public abstract void sendMessage(Text message, boolean overlay);
+	public abstract void displayClientMessage(Component message, boolean overlay);
 
-	public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
+	public ClientPlayerEntityMixin(ClientLevel world, GameProfile profile) {
 		super(world, profile);
 	}
 
 	@Override
 	public void npchousing$openNPCHousingBlockScreen(NPCHousingBlockEntity npcHousingBlockEntity) {
-		this.client.setScreen(new NPCHousingScreen(npcHousingBlockEntity));
+		this.minecraft.setScreen(new NPCHousingScreen(npcHousingBlockEntity));
 	}
 }
