@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.7-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 	id "com.matthewprenger.cursegradle" version "1.4.0"
 	id "com.github.breadmoirai.github-release" version "2.4.1"
 	id "com.modrinth.minotaur" version "2.+"
@@ -14,21 +14,21 @@ base {
 
 repositories {
 
-	// Cloth Config
-	maven {
-		url "https://maven.shedaniel.me/"
-	}
-
-	// Cloth Config, Mod Menu
-	maven {
-		name = "TerraformersMC"
-		url = "https://maven.terraformersmc.com/"
-	}
-
-	// DimLib
-	maven {
-		url 'https://jitpack.io'
-	}
+//	// Cloth Config
+//	maven {
+//		url "https://maven.shedaniel.me/"
+//	}
+//
+//	// Cloth Config, Mod Menu
+//	maven {
+//		name = "TerraformersMC"
+//		url = "https://maven.terraformersmc.com/"
+//	}
+//
+//	// DimLib
+//	maven {
+//		url 'https://jitpack.io'
+//	}
 
 	// Script Blocks, Slot Customization API
 	maven {
@@ -60,21 +60,21 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	// Cloth Config
-	modImplementation ("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")
+//	// Cloth Config
+//	modImplementation ("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")
 
-	// DimLib
-	modApi("com.github.iPortalTeam:DimLib:${dimlib_version}") {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
+//	// DimLib
+//	modApi("com.github.iPortalTeam:DimLib:${dimlib_version}") {
+//		exclude(group: "net.fabricmc.fabric-api")
+//	}
 
-	// Mod Menu
-	modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
+//	// Mod Menu
+//	modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
 
-	// Slot Customization API
-	modImplementation "maven.modrinth:slot-customization-api:${project.slot_customization_api_version}"
+//	// Slot Customization API
+//	modImplementation "maven.modrinth:slot-customization-api:${project.slot_customization_api_version}"
 
 	// Script Blocks
 //	modImplementation "maven.modrinth:script-blocks:${project.script_blocks_version}"
@@ -122,31 +122,31 @@ if (project.hasProperty('release_type')) {
 		finalizedBy(tasks.githubRelease)
 	}
 
-	curseforge {
-		apiKey = System.getenv("CURSEFORGE_API_KEY")
-		project {
-			id = System.getenv("CURSEFORGE_PROJECT_ID")
-			changelog = changelog_last_section()
-			changelogType = 'markdown'
-			releaseType = release_type
-			addGameVersion "${project.minecraft_version}"
-			addGameVersion "Fabric"
-
-			relations {
-				requiredDependency 'cloth-config'
-				requiredDependency 'fabric-api'
-				requiredDependency 'slot-customization-api'
-			}
-
-			mainArtifact(remapJar)
-			afterEvaluate {
-				uploadTask.dependsOn(remapJar)
-			}
-			options {
-				forgeGradleIntegration = false
-			}
-		}
-	}
+//	curseforge {
+//		apiKey = System.getenv("CURSEFORGE_API_KEY")
+//		project {
+//			id = System.getenv("CURSEFORGE_PROJECT_ID")
+//			changelog = changelog_last_section()
+//			changelogType = 'markdown'
+//			releaseType = release_type
+//			addGameVersion "${project.minecraft_version}"
+//			addGameVersion "Fabric"
+//
+//			relations {
+////				requiredDependency 'cloth-config'
+//				requiredDependency 'fabric-api'
+////				requiredDependency 'slot-customization-api'
+//			}
+//
+//			mainArtifact(remapJar)
+//			afterEvaluate {
+//				uploadTask.dependsOn(remapJar)
+//			}
+//			options {
+//				forgeGradleIntegration = false
+//			}
+//		}
+//	}
 
 	modrinth {
 		token = System.getenv("MODRINTH_API_KEY")
@@ -164,10 +164,10 @@ if (project.hasProperty('release_type')) {
 			// scope.type
 			// The scope can be `required`, `optional`, `incompatible`, or `embedded`
 			// The type can either be `project` or `version`
-			required.project 'cloth-config'
+//			required.project 'cloth-config'
 			required.project 'fabric-api'
-			embedded.project 'dimlib'
-			required.project 'slot-customization-api'
+//			embedded.project 'dimlib'
+//			required.project 'slot-customization-api'
 		}
 	}
 

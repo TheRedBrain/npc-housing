@@ -14,6 +14,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class NPCHousingBlock extends /*Rotated*/BlockWithEntity {
 	public static final MapCodec<NPCHousingBlock> CODEC = createCodec(NPCHousingBlock::new);
+
 	public NPCHousingBlock(AbstractBlock.Settings settings) {
 		super(settings);
 	}
@@ -39,7 +41,7 @@ public class NPCHousingBlock extends /*Rotated*/BlockWithEntity {
 	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return validateTicker(type, EntityRegistry.NPC_HOUSING_BLOCK_ENTITY, NPCHousingBlockEntity::tick);
+		return validateTicker(type, EntityRegistry.NPC_HOUSING_BLOCK_ENTITY, NPCHousingBlockEntity::tick);
 	}
 
 	@Override
@@ -52,16 +54,15 @@ public class NPCHousingBlock extends /*Rotated*/BlockWithEntity {
 		BlockEntity blockEntity = world.getBlockEntity(pos);
 		if (blockEntity instanceof NPCHousingBlockEntity npcHousingBlockEntity) {
 			((DuckPlayerEntityMixin) player).npchousing$openNPCHousingBlockScreen(npcHousingBlockEntity);
-			return ActionResult.success(world.isClient);
 		}
-		return ActionResult.PASS;
+		return ActionResult.SUCCESS;
 	}
 
 	@Override
-	protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+	protected void onStateReplaced(BlockState state, ServerWorld world, BlockPos pos, boolean moved) {
 		// TODO remove entry from housingMap
 
-		super.onStateReplaced(state, world, pos, newState, moved);
+		super.onStateReplaced(state, world, pos, moved);
 	}
 
 	@Override

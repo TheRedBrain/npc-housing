@@ -4,6 +4,8 @@ import com.github.theredbrain.npchousing.registry.EntityRegistry;
 import com.github.theredbrain.npchousing.registry.Tags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.StructureBoxRendering;
+import net.minecraft.block.enums.StructureBlockMode;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
@@ -20,7 +22,7 @@ import net.minecraft.world.World;
 import java.util.Arrays;
 import java.util.Optional;
 
-public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ {
+public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ implements StructureBoxRendering {
 
 	private boolean showInfluenceArea = true;
 	private Vec3i influenceAreaDimensions = new Vec3i(5, 3, 5);//Vec3i.ZERO;
@@ -30,39 +32,39 @@ public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ {
 		super(EntityRegistry.NPC_HOUSING_BLOCK_ENTITY, pos, state);
 	}
 
-	@Override
-	protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-
-		nbt.putBoolean("showInfluenceArea", this.showInfluenceArea);
-
-		nbt.putInt("influenceAreaDimensionsX", this.influenceAreaDimensions.getX());
-		nbt.putInt("influenceAreaDimensionsY", this.influenceAreaDimensions.getY());
-		nbt.putInt("influenceAreaDimensionsZ", this.influenceAreaDimensions.getZ());
-
-		nbt.putInt("influenceAreaPositionOffsetX", this.influenceAreaPositionOffset.getX());
-		nbt.putInt("influenceAreaPositionOffsetY", this.influenceAreaPositionOffset.getY());
-		nbt.putInt("influenceAreaPositionOffsetZ", this.influenceAreaPositionOffset.getZ());
-
-		super.writeNbt(nbt, registryLookup);
-	}
-
-	@Override
-	public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-
-		this.showInfluenceArea = nbt.getBoolean("showInfluenceArea");
-
-		int i = MathHelper.clamp(nbt.getInt("influenceAreaDimensionsX"), 0, 48);
-		int j = MathHelper.clamp(nbt.getInt("influenceAreaDimensionsY"), 0, 48);
-		int k = MathHelper.clamp(nbt.getInt("influenceAreaDimensionsZ"), 0, 48);
-		this.influenceAreaDimensions = new Vec3i(i, j, k);
-
-		int l = MathHelper.clamp(nbt.getInt("influenceAreaPositionOffsetX"), -48, 48);
-		int m = MathHelper.clamp(nbt.getInt("influenceAreaPositionOffsetY"), -48, 48);
-		int n = MathHelper.clamp(nbt.getInt("influenceAreaPositionOffsetZ"), -48, 48);
-		this.influenceAreaPositionOffset = new BlockPos(l, m, n);
-
-		super.readNbt(nbt, registryLookup);
-	}
+//	@Override
+//	protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+//
+//		nbt.putBoolean("showInfluenceArea", this.showInfluenceArea);
+//
+//		nbt.putInt("influenceAreaDimensionsX", this.influenceAreaDimensions.getX());
+//		nbt.putInt("influenceAreaDimensionsY", this.influenceAreaDimensions.getY());
+//		nbt.putInt("influenceAreaDimensionsZ", this.influenceAreaDimensions.getZ());
+//
+//		nbt.putInt("influenceAreaPositionOffsetX", this.influenceAreaPositionOffset.getX());
+//		nbt.putInt("influenceAreaPositionOffsetY", this.influenceAreaPositionOffset.getY());
+//		nbt.putInt("influenceAreaPositionOffsetZ", this.influenceAreaPositionOffset.getZ());
+//
+//		super.writeNbt(nbt, registryLookup);
+//	}
+//
+//	@Override
+//	public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+//
+//		this.showInfluenceArea = nbt.getBoolean("showInfluenceArea");
+//
+//		int i = MathHelper.clamp(nbt.getInt("influenceAreaDimensionsX"), 0, 48);
+//		int j = MathHelper.clamp(nbt.getInt("influenceAreaDimensionsY"), 0, 48);
+//		int k = MathHelper.clamp(nbt.getInt("influenceAreaDimensionsZ"), 0, 48);
+//		this.influenceAreaDimensions = new Vec3i(i, j, k);
+//
+//		int l = MathHelper.clamp(nbt.getInt("influenceAreaPositionOffsetX"), -48, 48);
+//		int m = MathHelper.clamp(nbt.getInt("influenceAreaPositionOffsetY"), -48, 48);
+//		int n = MathHelper.clamp(nbt.getInt("influenceAreaPositionOffsetZ"), -48, 48);
+//		this.influenceAreaPositionOffset = new BlockPos(l, m, n);
+//
+//		super.readNbt(nbt, registryLookup);
+//	}
 
 	public BlockEntityUpdateS2CPacket toUpdatePacket() {
 		return BlockEntityUpdateS2CPacket.create(this);
@@ -74,7 +76,7 @@ public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ {
 	}
 
 	public static void tick(World world, BlockPos pos, BlockState state, NPCHousingBlockEntity blockEntity) {
-		if (!world.isClient && world.getTime() % 20L == 0L) {
+		if (!world.isClient() && world.getTime() % 20L == 0L) {
 //			if (blockEntity.hasWorld() && !blockEntity.isOwnerSet && blockEntity.ownerMode == OwnerMode.DIMENSION_OWNER) {
 //				blockEntity.ownerUuid = initOwner(blockEntity.world);
 //				if (UUIDUtilities.isStringValidUUID(blockEntity.ownerUuid)) {
@@ -236,6 +238,78 @@ public class NPCHousingBlockEntity extends BlockEntity/*RotatedBlockEntity*/ {
 			}
 		}
 		return HouseStatus.IS_CLIENT;
+	}
+
+	public StructureBoxRendering.RenderMode getRenderMode() {
+		if (this.showInfluenceArea) {
+			return RenderMode.BOX_AND_INVISIBLE_BLOCKS;
+		} else {
+			return RenderMode.NONE;
+		}
+	}
+
+	public StructureBoxRendering.StructureBox getStructureBox() {
+//		BlockPos blockPos = this.getOffset();
+//		Vec3i vec3i = this.getSize();
+//		int i = blockPos.getX();
+//		int j = blockPos.getZ();
+//		int k = blockPos.getY();
+//		int l = k + vec3i.getY();
+//		int m;
+//		int n;
+//		switch (this.mirror) {
+//			case LEFT_RIGHT:
+//				m = vec3i.getX();
+//				n = -vec3i.getZ();
+//				break;
+//			case FRONT_BACK:
+//				m = -vec3i.getX();
+//				n = vec3i.getZ();
+//				break;
+//			default:
+//				m = vec3i.getX();
+//				n = vec3i.getZ();
+//		}
+//
+//		int o;
+//		int p;
+//		int q;
+//		int r;
+//		switch (this.rotation) {
+//			case CLOCKWISE_90:
+//				o = n < 0 ? i : i + 1;
+//				p = m < 0 ? j + 1 : j;
+//				q = o - n;
+//				r = p + m;
+//				break;
+//			case CLOCKWISE_180:
+//				o = m < 0 ? i : i + 1;
+//				p = n < 0 ? j : j + 1;
+//				q = o - m;
+//				r = p - n;
+//				break;
+//			case COUNTERCLOCKWISE_90:
+//				o = n < 0 ? i + 1 : i;
+//				p = m < 0 ? j : j + 1;
+//				q = o + n;
+//				r = p - m;
+//				break;
+//			default:
+//				o = m < 0 ? i + 1 : i;
+//				p = n < 0 ? j + 1 : j;
+//				q = o + m;
+//				r = p + n;
+//		}
+//
+//		return StructureBox.create(o, k, p, q, l, r);
+		return StructureBox.create(
+				this.pos.getX() + this.influenceAreaPositionOffset.getX(),
+				this.pos.getY() + this.influenceAreaPositionOffset.getY(),
+				this.pos.getZ() + this.influenceAreaPositionOffset.getZ(),
+				this.pos.getX() + this.influenceAreaPositionOffset.getX() + this.influenceAreaDimensions.getX(),
+				this.pos.getY() + this.influenceAreaPositionOffset.getY() + this.influenceAreaDimensions.getY(),
+				this.pos.getZ() + this.influenceAreaPositionOffset.getZ() + this.influenceAreaDimensions.getZ()
+		);
 	}
 
 	public static enum HouseStatus implements StringIdentifiable {

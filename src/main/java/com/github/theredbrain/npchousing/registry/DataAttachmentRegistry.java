@@ -12,9 +12,9 @@ import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
 
 public class DataAttachmentRegistry extends PersistentState {
-	@Override
-	public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-		return null;
-	}
+//	@Override
+//	public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+//		return null;
+//	}
 //	AttachmentType<RegistryKey<World>> testAttachmentType = AttachmentRegistry.builder()/*.persistent().initializer(new )*/.buildAndRegister(NPCHousing.identifier("test"));
 }

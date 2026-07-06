@@ -1,7 +1,7 @@
 package com.github.theredbrain.npchousing;
 
 import com.github.theredbrain.npchousing.registry.EntityRegistry;
-import com.github.theredbrain.npchousing.render.block.entity.NPCHousingBlockEntityRenderer;
+import com.github.theredbrain.npchousing.client.render.block.entity.NPCHousingBlockEntityRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 

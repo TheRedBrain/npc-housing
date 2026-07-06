@@ -1,15 +1,18 @@
 package com.github.theredbrain.npchousing.gui.screen.ingame;
 
+import com.github.theredbrain.npchousing.NPCHousing;
 import com.github.theredbrain.npchousing.block.entity.NPCHousingBlockEntity;
-import com.github.theredbrain.scriptblocks.ScriptBlocksMod;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
@@ -61,10 +64,10 @@ public class NPCHousingScreen extends Screen {
 	private static final Text RESET_OWNER_BUTTON_LABEL_TEXT = Text.translatable("gui.housing_block.reset_owner_button_label");
 	private static final Text TRIGGERED_BLOCK_POSITION_OFFSET_LABEL_TEXT = Text.translatable("gui.triggered_block.triggeredBlockPositionOffset");
 	public static final Identifier BACKGROUND_176_166_TEXTURE = Identifier.of("scriptblocks", "textures/gui/container/generic_176_166_background.png");
-	public static final Identifier BACKGROUND_218_95_TEXTURE = ScriptBlocksMod.identifier("textures/gui/container/generic_218_95_background.png");
-	public static final Identifier BACKGROUND_218_71_TEXTURE = ScriptBlocksMod.identifier("textures/gui/container/generic_218_71_background.png");
-	private static final Identifier PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE = ScriptBlocksMod.identifier("container/housing_screen/player_lists_scroller_background");
-	private static final Identifier SCROLLER_TEXTURE = ScriptBlocksMod.identifier("container/scroller");
+	public static final Identifier BACKGROUND_218_95_TEXTURE = NPCHousing.identifier("textures/gui/container/generic_218_95_background.png");
+	public static final Identifier BACKGROUND_218_71_TEXTURE = NPCHousing.identifier("textures/gui/container/generic_218_71_background.png");
+	private static final Identifier PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE = NPCHousing.identifier("container/housing_screen/player_lists_scroller_background");
+	private static final Identifier SCROLLER_TEXTURE = NPCHousing.identifier("container/scroller");
 
 	private final NPCHousingBlockEntity npcHousingBlockEntity;
 
@@ -108,7 +111,7 @@ public class NPCHousingScreen extends Screen {
 
 	private ButtonWidget closeListEditScreensButton;
 
-//	private ButtonWidget closeAdventureScreenButton;
+	//	private ButtonWidget closeAdventureScreenButton;
 	//endregion adventure widgets
 	//region creative widgets
 	private CyclingButtonWidget<CreativeScreenPage> creativeScreenPageButton;
@@ -119,7 +122,7 @@ public class NPCHousingScreen extends Screen {
 	private TextFieldWidget restrictBlockBreakingAreaPositionOffsetXField;
 	private TextFieldWidget restrictBlockBreakingAreaPositionOffsetYField;
 	private TextFieldWidget restrictBlockBreakingAreaPositionOffsetZField;
-//	private TextFieldWidget triggeredBlockPositionOffsetXField;
+	//	private TextFieldWidget triggeredBlockPositionOffsetXField;
 //	private TextFieldWidget triggeredBlockPositionOffsetYField;
 //	private TextFieldWidget triggeredBlockPositionOffsetZField;
 //	private CyclingButtonWidget<Boolean> toggleTriggeredBlockResetsButton;
@@ -131,12 +134,12 @@ public class NPCHousingScreen extends Screen {
 	//endregion creative widgets
 	private CreativeScreenPage creativeScreenPage;
 	private List<String> unlockedNPCs = new ArrayList<>(List.of());
-//	private List<String> trustedPersonsList = new ArrayList<>(List.of());
+	//	private List<String> trustedPersonsList = new ArrayList<>(List.of());
 //	private List<String> guestList = new ArrayList<>(List.of());
 	private boolean showInfluenceArea = false;
-//	private boolean showResetHouseScreen = false;
+	//	private boolean showResetHouseScreen = false;
 	private boolean showCoOwnerListScreen = false;
-//	private boolean showTrustedListScreen = false;
+	//	private boolean showTrustedListScreen = false;
 //	private boolean showGuestListScreen = false;
 	private int backgroundWidth;
 	private int backgroundHeight;
@@ -214,7 +217,7 @@ public class NPCHousingScreen extends Screen {
 
 	private void done() {
 		this.updateNPCHousingBlock();
-			this.close();
+		this.close();
 	}
 
 	private void cancel() {
@@ -236,7 +239,7 @@ public class NPCHousingScreen extends Screen {
 //			this.coOwnerList.addAll(this.npcHousingBlockEntity.getCoOwnerList());
 //			this.trustedPersonsList.addAll(this.npcHousingBlockEntity.getTrustedList());
 //			this.guestList.addAll(this.npcHousingBlockEntity.getGuestList());
-			this.showInfluenceArea = npcHousingBlockEntity.getShowInfluenceArea();
+		this.showInfluenceArea = npcHousingBlockEntity.getShowInfluenceArea();
 //			this.ownerMode = npcHousingBlockEntity.getOwnerMode();
 //		}
 //		if (this.currentPermissionLevel == 0) {
@@ -255,10 +258,10 @@ public class NPCHousingScreen extends Screen {
 //			this.x = (this.width - this.backgroundWidth) / 2;
 //			this.y = (this.height - this.backgroundHeight) / 2;
 //		} else {
-			this.backgroundWidth = 176;
-			this.backgroundHeight = 166;
-			this.x = (this.width - this.backgroundWidth) / 2;
-			this.y = (this.height - this.backgroundHeight) / 2;
+		this.backgroundWidth = 176;
+		this.backgroundHeight = 166;
+		this.x = (this.width - this.backgroundWidth) / 2;
+		this.y = (this.height - this.backgroundHeight) / 2;
 
 		super.init();
 		//region adventure screen
@@ -323,14 +326,14 @@ public class NPCHousingScreen extends Screen {
 		//endregion adventure screen
 
 		//region creative screen
-		this.creativeScreenPageButton = this.addDrawableChild(CyclingButtonWidget.builder(CreativeScreenPage::asText).values((CreativeScreenPage[]) CreativeScreenPage.values()).initially(this.creativeScreenPage).omitKeyText().build(this.width / 2 - 154, 20, 300, 20, Text.empty(), (button, creativeScreenPage) -> {
+		this.creativeScreenPageButton = this.addDrawableChild(CyclingButtonWidget.builder(CreativeScreenPage::asText, this.creativeScreenPage).values((CreativeScreenPage[]) CreativeScreenPage.values()).omitKeyText().build(this.width / 2 - 154, 20, 300, 20, Text.empty(), (button, creativeScreenPage) -> {
 			this.creativeScreenPage = creativeScreenPage;
 			this.updateWidgets();
 		}));
 
 		// --- influence area page ---
 
-		this.showRestrictBlockBreakingAreaButton = this.addDrawableChild(CyclingButtonWidget.onOffBuilder(HIDE_INFLUENCE_AREA_LABEL_TEXT, SHOW_INFLUENCE_AREA_LABEL_TEXT).initially(this.showInfluenceArea).omitKeyText().build(this.width / 2 - 153, 45, 300, 20, Text.empty(), (button, showInfluenceArea) -> {
+		this.showRestrictBlockBreakingAreaButton = this.addDrawableChild(CyclingButtonWidget.onOffBuilder(HIDE_INFLUENCE_AREA_LABEL_TEXT, SHOW_INFLUENCE_AREA_LABEL_TEXT, this.showInfluenceArea).omitKeyText().build(this.width / 2 - 153, 45, 300, 20, Text.empty(), (button, showInfluenceArea) -> {
 			this.showInfluenceArea = showInfluenceArea;
 		}));
 
@@ -607,7 +610,7 @@ public class NPCHousingScreen extends Screen {
 	}
 
 	@Override
-	public void resize(MinecraftClient client, int width, int height) {
+	public void resize(int width, int height) {
 //		List<String> list = new ArrayList<>(this.coOwnerList);
 //		List<String> list1 = new ArrayList<>(this.trustedPersonsList);
 //		List<String> list2 = new ArrayList<>(this.guestList);
@@ -628,7 +631,7 @@ public class NPCHousingScreen extends Screen {
 //		String string10 = this.triggeredBlockPositionOffsetYField.getText();
 //		String string11 = this.triggeredBlockPositionOffsetZField.getText();
 //		boolean boolean2 = this.triggeredBlockResets;
-		this.init(client, width, height);
+		this.init(width, height);
 //		this.coOwnerList.clear();
 //		this.trustedPersonsList.clear();
 //		this.guestList.clear();
@@ -657,7 +660,7 @@ public class NPCHousingScreen extends Screen {
 
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+	public boolean mouseClicked(Click click, boolean doubled) {
 //		this.mouseClicked = false;
 //		if (!this.showCreativeTab
 //				&& ((this.showCoOwnerListScreen && this.unlockedNPCs.size() > 5)
@@ -669,11 +672,11 @@ public class NPCHousingScreen extends Screen {
 //				this.mouseClicked = true;
 //			}
 //		}
-		return super.mouseClicked(mouseX, mouseY, button);
+		return super.mouseClicked(click, doubled);
 	}
 
 	@Override
-	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+	public boolean mouseDragged(Click click, double offsetX, double offsetY) {
 //		if (!this.showCreativeTab
 //				&& this.showCoOwnerListScreen
 //				&& this.unlockedNPCs.size() > 5
@@ -701,11 +704,11 @@ public class NPCHousingScreen extends Screen {
 //			this.scrollAmount = MathHelper.clamp(this.scrollAmount + f, 0.0f, 1.0f);
 //			this.scrollPosition = (int) ((double) (this.scrollAmount * (float) i));
 //		}
-		return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+		return super.mouseDragged(click, offsetX, offsetY);
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY/*, double horizontalAmount*/, double verticalAmount) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
 //		if (!this.showCreativeTab
 //				&& this.showCoOwnerListScreen
 //				&& this.unlockedNPCs.size() > 5
@@ -736,39 +739,39 @@ public class NPCHousingScreen extends Screen {
 //			this.scrollAmount = MathHelper.clamp(this.scrollAmount - f, 0.0f, 1.0f);
 //			this.scrollPosition = (int) ((double) (this.scrollAmount * (float) i));
 //		}
-		return super.mouseScrolled(mouseX, mouseY/*, horizontalAmount*/, verticalAmount);
+		return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+	public boolean keyPressed(KeyInput input) {
+		if (input.isEnter()) {
 			this.done();
 			return true;
 		}
-		return super.keyPressed(keyCode, scanCode, modifiers);
+		return super.keyPressed(input);
 	}
 
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
 
-		this.renderBackground(context);
+//		this.renderBackground(context, mouseX, mouseY, delta);
 
 //		if (this.showCreativeTab) {
-			if (this.creativeScreenPage == CreativeScreenPage.HOUSE) {
-				context.drawText(this.textRenderer, INFLUENCE_AREA_DIMENSIONS_LABEL_TEXT, this.width / 2 - 153, 70, 0xA0A0A0, false);
-				this.restrictBlockBreakingAreaDimensionsXField.render(context, mouseX, mouseY, delta);
-				this.restrictBlockBreakingAreaDimensionsYField.render(context, mouseX, mouseY, delta);
-				this.restrictBlockBreakingAreaDimensionsZField.render(context, mouseX, mouseY, delta);
-				context.drawText(this.textRenderer, INFLUENCE_AREA_POSITION_OFFET_LABEL_TEXT, this.width / 2 - 153, 105, 0xA0A0A0, false);
-				this.restrictBlockBreakingAreaPositionOffsetXField.render(context, mouseX, mouseY, delta);
-				this.restrictBlockBreakingAreaPositionOffsetYField.render(context, mouseX, mouseY, delta);
-				this.restrictBlockBreakingAreaPositionOffsetZField.render(context, mouseX, mouseY, delta);
-			} else if (this.creativeScreenPage == CreativeScreenPage.RESIDENT) {
+		if (this.creativeScreenPage == CreativeScreenPage.HOUSE) {
+			context.drawText(this.textRenderer, INFLUENCE_AREA_DIMENSIONS_LABEL_TEXT, this.width / 2 - 153, 70, 0xA0A0A0, false);
+			this.restrictBlockBreakingAreaDimensionsXField.render(context, mouseX, mouseY, delta);
+			this.restrictBlockBreakingAreaDimensionsYField.render(context, mouseX, mouseY, delta);
+			this.restrictBlockBreakingAreaDimensionsZField.render(context, mouseX, mouseY, delta);
+			context.drawText(this.textRenderer, INFLUENCE_AREA_POSITION_OFFET_LABEL_TEXT, this.width / 2 - 153, 105, 0xA0A0A0, false);
+			this.restrictBlockBreakingAreaPositionOffsetXField.render(context, mouseX, mouseY, delta);
+			this.restrictBlockBreakingAreaPositionOffsetYField.render(context, mouseX, mouseY, delta);
+			this.restrictBlockBreakingAreaPositionOffsetZField.render(context, mouseX, mouseY, delta);
+		} else if (this.creativeScreenPage == CreativeScreenPage.RESIDENT) {
 //				context.drawTextWithShadow(this.textRenderer, TRIGGERED_BLOCK_POSITION_OFFSET_LABEL_TEXT, this.width / 2 - 153, 70, 0xA0A0A0);
 //				this.triggeredBlockPositionOffsetXField.render(context, mouseX, mouseY, delta);
 //				this.triggeredBlockPositionOffsetYField.render(context, mouseX, mouseY, delta);
 //				this.triggeredBlockPositionOffsetZField.render(context, mouseX, mouseY, delta);
-			}
+		}
 //		} else {
 //			if (this.showResetHouseScreen) {
 //			} else if (this.showCoOwnerListScreen) {
@@ -841,21 +844,21 @@ public class NPCHousingScreen extends Screen {
 	}
 
 	@Override
-	public void renderBackground(DrawContext context/*, int mouseX, int mouseY, float delta*/) {
-		super.renderBackground(context/*, mouseX, mouseY, delta*/);
-		this.drawBackground(context/*, delta, mouseX, mouseY*/);
+	public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+		super.renderBackground(context, mouseX, mouseY, delta);
+		this.drawBackground(context, delta, mouseX, mouseY);
 	}
 
-	public void drawBackground(DrawContext context/*, float delta, int mouseX, int mouseY*/) {
+	public void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
 //		if (!this.showCreativeTab) {
-			int i = this.x;
-			int j = this.y;
+		int i = this.x;
+		int j = this.y;
 //			if (this.currentPermissionLevel == 0) {
 //				context.drawTexture(BACKGROUND_218_215_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 //			} else if (this.currentPermissionLevel == 1 || this.ownerMode == HousingBlockEntity.OwnerMode.INTERACTION) {
 //				context.drawTexture(BACKGROUND_218_95_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 //			} else {
-				context.drawTexture(BACKGROUND_176_166_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_176_166_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 //			}
 //		}
 	}
@@ -900,7 +903,7 @@ public class NPCHousingScreen extends Screen {
 //		}
 	}
 
-//	private void toggleAdventureBuildingEffect() {
+	//	private void toggleAdventureBuildingEffect() {
 //		ClientPlayNetworking.send(new AddStatusEffectPacket(
 //				Registries.STATUS_EFFECT.getId(StatusEffectsRegistry.BUILDING_MODE),
 //				-1,
