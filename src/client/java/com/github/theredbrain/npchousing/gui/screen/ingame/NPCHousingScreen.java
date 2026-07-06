@@ -5,7 +5,7 @@ import com.github.theredbrain.npchousing.block.entity.NPCHousingBlockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.GameNarrator;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -17,7 +17,6 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -751,89 +750,89 @@ public class NPCHousingScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
+	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
 
-//		this.renderBackground(context, mouseX, mouseY, delta);
+//		this.renderBackground(graphics, mouseX, mouseY, delta);
 
 //		if (this.showCreativeTab) {
 		if (this.creativeScreenPage == CreativeScreenPage.HOUSE) {
-			context.drawString(this.font, INFLUENCE_AREA_DIMENSIONS_LABEL_TEXT, this.width / 2 - 153, 70, 0xA0A0A0, false);
-			this.restrictBlockBreakingAreaDimensionsXField.render(context, mouseX, mouseY, delta);
-			this.restrictBlockBreakingAreaDimensionsYField.render(context, mouseX, mouseY, delta);
-			this.restrictBlockBreakingAreaDimensionsZField.render(context, mouseX, mouseY, delta);
-			context.drawString(this.font, INFLUENCE_AREA_POSITION_OFFET_LABEL_TEXT, this.width / 2 - 153, 105, 0xA0A0A0, false);
-			this.restrictBlockBreakingAreaPositionOffsetXField.render(context, mouseX, mouseY, delta);
-			this.restrictBlockBreakingAreaPositionOffsetYField.render(context, mouseX, mouseY, delta);
-			this.restrictBlockBreakingAreaPositionOffsetZField.render(context, mouseX, mouseY, delta);
+			graphics.text(this.font, INFLUENCE_AREA_DIMENSIONS_LABEL_TEXT, this.width / 2 - 153, 70, 0xA0A0A0, false);
+			this.restrictBlockBreakingAreaDimensionsXField.extractRenderState(graphics, mouseX, mouseY, delta);
+			this.restrictBlockBreakingAreaDimensionsYField.extractRenderState(graphics, mouseX, mouseY, delta);
+			this.restrictBlockBreakingAreaDimensionsZField.extractRenderState(graphics, mouseX, mouseY, delta);
+			graphics.text(this.font, INFLUENCE_AREA_POSITION_OFFET_LABEL_TEXT, this.width / 2 - 153, 105, 0xA0A0A0, false);
+			this.restrictBlockBreakingAreaPositionOffsetXField.extractRenderState(graphics, mouseX, mouseY, delta);
+			this.restrictBlockBreakingAreaPositionOffsetYField.extractRenderState(graphics, mouseX, mouseY, delta);
+			this.restrictBlockBreakingAreaPositionOffsetZField.extractRenderState(graphics, mouseX, mouseY, delta);
 		} else if (this.creativeScreenPage == CreativeScreenPage.RESIDENT) {
-//				context.drawTextWithShadow(this.textRenderer, TRIGGERED_BLOCK_POSITION_OFFSET_LABEL_TEXT, this.width / 2 - 153, 70, 0xA0A0A0);
-//				this.triggeredBlockPositionOffsetXField.render(context, mouseX, mouseY, delta);
-//				this.triggeredBlockPositionOffsetYField.render(context, mouseX, mouseY, delta);
-//				this.triggeredBlockPositionOffsetZField.render(context, mouseX, mouseY, delta);
+//				graphics.drawTextWithShadow(this.textRenderer, TRIGGERED_BLOCK_POSITION_OFFSET_LABEL_TEXT, this.width / 2 - 153, 70, 0xA0A0A0);
+//				this.triggeredBlockPositionOffsetXField.extractRenderState(graphics, mouseX, mouseY, delta);
+//				this.triggeredBlockPositionOffsetYField.extractRenderState(graphics, mouseX, mouseY, delta);
+//				this.triggeredBlockPositionOffsetZField.extractRenderState(graphics, mouseX, mouseY, delta);
 		}
 //		} else {
 //			if (this.showResetHouseScreen) {
 //			} else if (this.showCoOwnerListScreen) {
-//				context.drawText(this.textRenderer, TITLE_CO_OWNER_LIST_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
-//				context.drawText(this.textRenderer, TITLE_CO_OWNER_LIST_DESCRIPTION_LABEL_TEXT, this.x + 8, this.y + 20, 0x404040, false);
+//				graphics.drawText(this.textRenderer, TITLE_CO_OWNER_LIST_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
+//				graphics.drawText(this.textRenderer, TITLE_CO_OWNER_LIST_DESCRIPTION_LABEL_TEXT, this.x + 8, this.y + 20, 0x404040, false);
 //				for (int i = this.scrollPosition; i < Math.min(this.scrollPosition + 5, this.unlockedNPCs.size()); i++) {
 //					String text = this.unlockedNPCs.get(i);
-//					context.drawText(this.textRenderer, text, this.x + 19, this.y + 39 + ((i - this.scrollPosition) * 24), 0x404040, false);
+//					graphics.drawText(this.textRenderer, text, this.x + 19, this.y + 39 + ((i - this.scrollPosition) * 24), 0x404040, false);
 //				}
 //				if (this.unlockedNPCs.size() > 5) {
-////                    context.drawGuiTexture(PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE, this.x + 7, this.y + 33, 8, 116);
-//					context.drawTexture(PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE, this.x + 7, this.y + 33, 0, 0, 8, 116);
+////                    graphics.drawGuiTexture(PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE, this.x + 7, this.y + 33, 8, 116);
+//					graphics.drawTexture(PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE, this.x + 7, this.y + 33, 0, 0, 8, 116);
 //					int k = (int) (107.0f * this.scrollAmount);
-////                    context.drawGuiTexture(SCROLLER_TEXTURE, this.x + 8, this.y + 33 + 1 + k, 6, 7);
-//					context.drawTexture(SCROLLER_TEXTURE, this.x + 8, this.y + 33 + 1 + k, 0, 0, 6, 7);
+////                    graphics.drawGuiTexture(SCROLLER_TEXTURE, this.x + 8, this.y + 33 + 1 + k, 6, 7);
+//					graphics.drawTexture(SCROLLER_TEXTURE, this.x + 8, this.y + 33 + 1 + k, 0, 0, 6, 7);
 //				}
-//				this.newCoOwnerField.render(context, mouseX, mouseY, delta);
+//				this.newCoOwnerField.extractRenderState(graphics, mouseX, mouseY, delta);
 //			} else if (this.showTrustedListScreen) {
-//				context.drawText(this.textRenderer, TITLE_TRUSTED_LIST_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
-//				context.drawText(this.textRenderer, TITLE_TRUSTED_LIST_DESCRIPTION_LABEL_TEXT, this.x + 8, this.y + 20, 0x404040, false);
+//				graphics.drawText(this.textRenderer, TITLE_TRUSTED_LIST_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
+//				graphics.drawText(this.textRenderer, TITLE_TRUSTED_LIST_DESCRIPTION_LABEL_TEXT, this.x + 8, this.y + 20, 0x404040, false);
 //				for (int i = this.scrollPosition; i < Math.min(this.scrollPosition + 5, this.trustedPersonsList.size()); i++) {
 //					String text = this.trustedPersonsList.get(i);
-//					context.drawText(this.textRenderer, text, this.x + 19, this.y + 39 + ((i - this.scrollPosition) * 24), 0x404040, false);
+//					graphics.drawText(this.textRenderer, text, this.x + 19, this.y + 39 + ((i - this.scrollPosition) * 24), 0x404040, false);
 //				}
 //				if (this.trustedPersonsList.size() > 5) {
-////                    context.drawGuiTexture(PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE, this.x + 7, this.y + 33, 8, 116);
-//					context.drawTexture(PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE, this.x + 7, this.y + 33, 0, 0, 8, 116);
+////                    graphics.drawGuiTexture(PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE, this.x + 7, this.y + 33, 8, 116);
+//					graphics.drawTexture(PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE, this.x + 7, this.y + 33, 0, 0, 8, 116);
 //					int k = (int) (107.0f * this.scrollAmount);
-////                    context.drawGuiTexture(SCROLLER_TEXTURE, this.x + 8, this.y + 33 + 1 + k, 6, 7);
-//					context.drawTexture(SCROLLER_TEXTURE, this.x + 8, this.y + 33 + 1 + k, 0, 0, 6, 7);
+////                    graphics.drawGuiTexture(SCROLLER_TEXTURE, this.x + 8, this.y + 33 + 1 + k, 6, 7);
+//					graphics.drawTexture(SCROLLER_TEXTURE, this.x + 8, this.y + 33 + 1 + k, 0, 0, 6, 7);
 //				}
-//				this.newTrustedPersonField.render(context, mouseX, mouseY, delta);
+//				this.newTrustedPersonField.extractRenderState(graphics, mouseX, mouseY, delta);
 //			} else if (this.showGuestListScreen) {
-//				context.drawText(this.textRenderer, TITLE_GUEST_LIST_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
-//				context.drawText(this.textRenderer, TITLE_GUEST_LIST_DESCRIPTION_LABEL_TEXT, this.x + 8, this.y + 20, 0x404040, false);
+//				graphics.drawText(this.textRenderer, TITLE_GUEST_LIST_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
+//				graphics.drawText(this.textRenderer, TITLE_GUEST_LIST_DESCRIPTION_LABEL_TEXT, this.x + 8, this.y + 20, 0x404040, false);
 //				for (int i = this.scrollPosition; i < Math.min(this.scrollPosition + 5, this.guestList.size()); i++) {
 //					String text = this.guestList.get(i);
-//					context.drawText(this.textRenderer, text, this.x + 19, this.y + 39 + ((i - this.scrollPosition) * 24), 0x404040, false);
+//					graphics.drawText(this.textRenderer, text, this.x + 19, this.y + 39 + ((i - this.scrollPosition) * 24), 0x404040, false);
 //				}
 //				if (this.guestList.size() > 5) {
-////                    context.drawGuiTexture(PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE, this.x + 7, this.y + 33, 8, 116);
-//					context.drawTexture(PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE, this.x + 7, this.y + 33, 0, 0, 8, 116);
+////                    graphics.drawGuiTexture(PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE, this.x + 7, this.y + 33, 8, 116);
+//					graphics.drawTexture(PLAYER_LISTS_SCROLLER_BACKGROUND_TEXTURE, this.x + 7, this.y + 33, 0, 0, 8, 116);
 //					int k = (int) (107.0f * this.scrollAmount);
-////                    context.drawGuiTexture(SCROLLER_TEXTURE, this.x + 8, this.y + 33 + 1 + k, 6, 7);
-//					context.drawTexture(SCROLLER_TEXTURE, this.x + 8, this.y + 33 + 1 + k, 0, 0, 6, 7);
+////                    graphics.drawGuiTexture(SCROLLER_TEXTURE, this.x + 8, this.y + 33 + 1 + k, 6, 7);
+//					graphics.drawTexture(SCROLLER_TEXTURE, this.x + 8, this.y + 33 + 1 + k, 0, 0, 6, 7);
 //				}
-//				this.newGuestField.render(context, mouseX, mouseY, delta);
+//				this.newGuestField.extractRenderState(graphics, mouseX, mouseY, delta);
 //			} else {
 //				if (this.currentPermissionLevel == 0) {
-//					context.drawText(this.textRenderer, TITLE_OWNER_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
+//					graphics.drawText(this.textRenderer, TITLE_OWNER_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
 //				} else if (this.currentPermissionLevel == 1) {
-//					context.drawText(this.textRenderer, TITLE_CO_OWNER_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
+//					graphics.drawText(this.textRenderer, TITLE_CO_OWNER_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
 //				} else if (this.currentPermissionLevel == 2) {
-//					context.drawText(this.textRenderer, TITLE_TRUSTED_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
+//					graphics.drawText(this.textRenderer, TITLE_TRUSTED_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
 //				} else if (this.currentPermissionLevel == 3) {
-//					context.drawText(this.textRenderer, TITLE_GUEST_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
+//					graphics.drawText(this.textRenderer, TITLE_GUEST_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
 //				} else if (this.currentPermissionLevel == 4) {
-//					context.drawText(this.textRenderer, TITLE_STRANGER_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
+//					graphics.drawText(this.textRenderer, TITLE_STRANGER_LABEL_TEXT, this.x + 8, this.y + 7, 0x404040, false);
 //				}
 //			}
 //		}
 
-		super.render(context, mouseX, mouseY, delta);
+		super.extractRenderState(graphics, mouseX, mouseY, delta);
 	}
 
 
@@ -843,21 +842,21 @@ public class NPCHousingScreen extends Screen {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta) {
-		super.renderBackground(context, mouseX, mouseY, delta);
-		this.drawBackground(context, delta, mouseX, mouseY);
+	public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float a) {
+		super.extractBackground(graphics, mouseX, mouseY, a);
+		this.drawBackground(graphics, mouseX, mouseY, a);
 	}
 
-	public void drawBackground(GuiGraphics context, float delta, int mouseX, int mouseY) {
+	public void drawBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
 //		if (!this.showCreativeTab) {
 		int i = this.x;
 		int j = this.y;
 //			if (this.currentPermissionLevel == 0) {
-//				context.drawTexture(BACKGROUND_218_215_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+//				graphics.drawTexture(BACKGROUND_218_215_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 //			} else if (this.currentPermissionLevel == 1 || this.ownerMode == HousingBlockEntity.OwnerMode.INTERACTION) {
-//				context.drawTexture(BACKGROUND_218_95_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+//				graphics.drawTexture(BACKGROUND_218_95_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 //			} else {
-		context.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND_176_166_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+		graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND_176_166_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 //			}
 //		}
 	}
